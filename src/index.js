@@ -1,6 +1,6 @@
 import dva from 'dva'
 import createLoading from 'dva-loading'
-import createHistory from 'history/createBrowserHistory';
+import createHistory from 'history/createBrowserHistory'
 import './reset.css'
 import models from './models'
 const modelKeys = Object.keys(models)
@@ -17,7 +17,7 @@ const app = dva({
 })
 
 modelKeys.forEach(modelKey => {
-  app.model(models[modelKey])
+  app.model(models[modelKey].default)
 })
 
 // 3. Router

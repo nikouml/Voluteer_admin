@@ -18,32 +18,27 @@ dirNames.forEach(item => {
 export default {
   'entry': 'src/index.js',
   'disableCSSModules': true,
+  'html': { 'template': './src/index.ejs' },
   'hash': true,
   'env': {
     'development': {
       'extraBabelPlugins': [
         'dva-hmr',
-        'transform-runtime',
         'transform-decorators-legacy',
-        ["module-resolver", {
-          "alias": alias
+        ['module-resolver', {
+          'alias': alias
         }]
       ]
     },
     'production': {
       'extraBabelPlugins': [
-        'transform-runtime',
         'transform-decorators-legacy',
-        ["module-resolver", {
-          "alias": alias
+        ['module-resolver', {
+          'alias': alias
         }]
       ],
-      'autoprefixer': {
-        'browsers': [
-          'iOS >= 8', 'Android >= 4', 'ie >=9'
-        ]
-      }
+      publicPath: 'http://qhdjl.cdn.neuqzxy.cn/fe'
     }
   },
-  publicPath: 'http://qhdjl.cdn.neuqzxy.cn/fe'
+  publicPath: '/'
 }

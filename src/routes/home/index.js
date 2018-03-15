@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from 'react'
+import React, { PureComponent } from 'react'
 import Item from './Item'
 import { immutableRenderDecorator } from 'react-immutable-render-mixin'
 import routerPush from 'utils/routerPush'
