@@ -44,5 +44,6 @@ export default {
         ]
       }
     }
-  }
+  },
+  publicPath: 'http://qhdjl.cdn.neuqzxy.cn/fe'
 }

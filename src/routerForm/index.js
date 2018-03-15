@@ -1,3 +1,5 @@
+import pathToRegexp from 'path-to-regexp'
+// import queryString from 'query-string'
 const files = require.context('.', true, /\.js$/)
 let pathArr = []
 let pathMap = {}
@@ -45,8 +47,25 @@ function getPath (pathObj, basePath = '') {
 pathArr.forEach(item => {
   getPath(item)
 })
-export default (name) => {
-  return pathMap[name]
+export default (name, options) => {
+  if (options === void 0) {
+    return pathMap[name]
+  }
+  const {query = {}, params = {}} = options
+  const toPath = pathToRegexp.compile(pathMap[name])
+  let querystring = ''
+  let keys = Object.keys(query)
+  keys.forEach(item => {
+    if (Array.isArray(query[item])) {
+      query[item].forEach(i => {
+        querystring += `${item}=${i}&`
+      })
+    } else {
+      querystring += `${item}=${query[item]}&`
+    }
+    querystring = querystring.substr(0, querystring.length - 1)
+  })
+  return `${toPath(params)}?${querystring}`
 }
 
 export {namesMap}

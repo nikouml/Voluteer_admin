@@ -5,7 +5,7 @@ export default [
   },
   {
     name: 'AsyncPage',
-    path: '/async'
+    path: '/async/:page/a'
   }
 ]
 

@@ -2,7 +2,7 @@ import React from 'react'
 
 const Item = ({count}) => {
   return (
-    <div>{count.value||'0'}</div>
+    <div>{count.value || '0'}</div>
   )
 }
 

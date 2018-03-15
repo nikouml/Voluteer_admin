@@ -6,7 +6,7 @@ import { Link } from 'dva/router'
 import logo from 'images/logo.svg'
 import './index.less'
 import path, {namesMap} from 'routerForm/index'
-const {HomePage, AsyncPage, Page404, HomePage2} = namesMap
+const {HomePage, AsyncPage, HomePage2} = namesMap
 
 const LayoutContent = (props) => (
   <div className='App'>
@@ -17,8 +17,8 @@ const LayoutContent = (props) => (
 
     <header className='App-nav'>
       <Link to={path(HomePage)}> home </Link>
-      <Link to={path(AsyncPage)}> async </Link>
-      <Link to={path(HomePage2)}> 404 </Link>
+      <Link to={path(AsyncPage, {params: {page: 'abc'}})}> async </Link>
+      <Link to={path(HomePage2, {query: {a: [1, 2, 3]}})}> 404 </Link>
     </header>
     <div className='App-content'>
       {props.children}
