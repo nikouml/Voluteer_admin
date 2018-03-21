@@ -1,10 +1,18 @@
 import React from 'react'
-import { Redirect, Route, Switch } from 'dva/router'
+import {Redirect, Route, Switch} from 'dva/router'
 import Homepage from './home'
 import NotFound from './404'
 import dynamic from 'dva/dynamic'
 import Layout from 'components/Layout'
+
+import ServiceList from './AppRouter/serviceProjectManage/serviceList/index'
+import ServiceUnpassList from './AppRouter/serviceProjectManage/serviceUnpassList/index'
+import Activity from './AppRouter/serviceProjectManage/serviceList/activities'
+import EditWechat from './AppRouter/serviceProjectManage/serviceList/wechatEdit/index'
+import ActivityUnpass from './AppRouter/serviceProjectManage/serviceUnpassList/activitisUnpass'
+
 import path, {namesMap} from 'routerForm'
+
 const {HomePage, AsyncPage, Page404} = namesMap
 
 const App = (props) => {
@@ -12,11 +20,18 @@ const App = (props) => {
   return (
     <Layout>
       <Switch>
-        <Route exact path='/' component={Homepage} />
-        <Route path={path(HomePage)} component={Homepage} />
-        <Route path={path(AsyncPage)} component={AsyncDemo} />
-        <Route path={path(Page404)} component={NotFound} />
-        <Redirect from='*' to='/404' />
+        <Route exact path='/' component={Homepage}/>
+        <Route path={path(HomePage)} component={Homepage}/>
+
+        <Route exact path='/activity/1' component={Activity}/>
+        <Route path='/activity/1/weixin' component={EditWechat}/>
+        <Route path='/servicelist' component={ServiceList}/>
+        <Route path='/serviceunpasslist' component={ServiceUnpassList}/>
+        <Route path='/unpass/1' component={ActivityUnpass}/>
+
+        <Route path={path(AsyncPage)} component={AsyncDemo}/>
+        <Route path={path(Page404)} component={NotFound}/>
+        <Redirect from='*' to='/404'/>
       </Switch>
     </Layout>
   )
