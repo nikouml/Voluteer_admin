@@ -3,6 +3,7 @@ import createLoading from 'dva-loading'
 import createHistory from 'history/createBrowserHistory'
 import './reset.css'
 import models from './models'
+import 'antd/dist/antd.css'
 const modelKeys = Object.keys(models)
 
 // 1. Initialize
