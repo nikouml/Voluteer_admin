@@ -8,6 +8,7 @@
     "path-to-regexp": "^2.2.0",
     "prop-types": "^15.6.0",
     "query-string": "^6.0.0",
+    "rc-tween-one": "^1.7.3",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-immutable-render-mixin": "^0.9.7",
