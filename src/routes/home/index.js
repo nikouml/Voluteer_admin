@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import { immutableRenderDecorator } from 'react-immutable-render-mixin'
 import routerPush from 'utils/routerPush'
-import { Input } from 'antd'
+import { Input, Icon } from 'antd'
 import { namesMap } from 'routerForm'
 import ReactEcharts from 'echarts-for-react'
 import './index.css'
@@ -18,26 +18,26 @@ export default class HomePage extends PureComponent {
 
   getOption = () => ({
     title: {
-      text: 'ECharts 入门示例'
+      text: '项目服务'
     },
     tooltip: {},
     legend: {
       data: ['销量']
     },
     xAxis: {
-      data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+      data: ['总需求', '未完成', '进行中', '已完成']
     },
     yAxis: {},
     series: [{
-      name: '销量',
+      // name: '销量',
       type: 'bar',
-      data: [5, 20, 36, 10, 10, 20]
+      data: [5, 20, 36, 10]
     }]
   })
   getOption2 = () => ({
     title: {
-      text: '某站点用户访问来源',
-      subtext: '纯属虚构',
+      text: '项目完成度',
+      // subtext: '纯属虚构',
       x: 'center'
     },
     tooltip: {
@@ -56,11 +56,9 @@ export default class HomePage extends PureComponent {
         radius: '55%',
         center: ['50%', '60%'],
         data: [
-          {value: 335, name: '直接访问'},
-          {value: 310, name: '邮件营销'},
-          {value: 234, name: '联盟广告'},
-          {value: 135, name: '视频广告'},
-          {value: 1548, name: '搜索引擎'}
+          {value: 335, name: '未完成的服务项目'},
+          {value: 310, name: '正在进行中的服务项目'},
+          {value: 234, name: '以完成的服务项目'}
         ],
         itemStyle: {
           emphasis: {
@@ -75,14 +73,14 @@ export default class HomePage extends PureComponent {
   getOption3 = () => {
     return {
       title: {
-        text: '堆叠区域图'
+        text: '新增志愿活动次数'
       },
       tooltip: {
         trigger: 'axis'
       },
-      legend: {
-        data: ['邮件营销', '联盟广告', '视频广告']
-      },
+      // legend: {
+      //   data: ['邮件营销', '联盟广告', '视频广告']
+      // },
       toolbox: {
         feature: {
           saveAsImage: {}
@@ -153,7 +151,7 @@ export default class HomePage extends PureComponent {
     return (
       <div>
         <div className="first-title">
-          > 系统消息
+          <Icon type="caret-right" style={{fontSize: 16, color: '#a4b7cc'}} /> 系统消息
         </div>
         <div className="page-content"> 通知公告<Input placeholder="value" style={{width: 400, marginLeft: 20}} />
         </div>
@@ -173,36 +171,36 @@ export default class HomePage extends PureComponent {
         </div>
 
         <div className="first-title">
-          > 服务网点概况
+          <Icon type="caret-right" style={{fontSize: 16, color: '#a4b7cc'}} /> 服务网点概况
         </div>
         <div className="map-show">
           百度地图调用
         </div>
         <div className="depart-server">
           <div className="first-title">
-            > 项目服务概况
+            <Icon type="caret-right" style={{fontSize: 16, color: '#a4b7cc'}} /> 项目服务概况
             <div>
-              <div className="zuoshang">
+              <div className="four-part-echarts">
                 <ReactEcharts
                   option={this.getOption3()}
-                  style={{height: '350px', width: '40%',float:'left'}}
+                  style={{height: '350px', width: '40%', float: 'left'}}
                   className='react_for_echarts' />
 
               </div>
-              <div className="youshang">
+              <div className="four-part-echarts">
                 <ReactEcharts
                   option={this.getOption3()}
-                  style={{height: '350px', width: '40%',float:'left'}}
+                  style={{height: '350px', width: '40%', float: 'left'}}
                   className='react_for_echarts' />
               </div>
-              <div className="zuoxia">
+              <div className="four-part-echarts">
                 <ReactEcharts
                   option={this.getOption()}
-                  style={{height: '400px', width: '30%', float: 'left',clear:'both'}}
+                  style={{height: '400px', width: '30%', float: 'left'}}
                   opts={{renderer: 'svg'}}
                   className='react_for_echarts' />
               </div>
-              <div className="youxia">
+              <div className="four-part">
                 <ReactEcharts
                   option={this.getOption2()}
                   style={{height: 300, width: '50%', float: 'right'}}

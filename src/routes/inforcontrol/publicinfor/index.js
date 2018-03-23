@@ -1,6 +1,6 @@
 import React from 'react'
 import 'antd/dist/antd.css'
-import { Input, Button } from 'antd'
+import { Input, Button,Icon} from 'antd'
 import './index.css'
 
 const {TextArea} = Input
@@ -27,7 +27,8 @@ export default class incontrol extends React.Component {
     return (
       <div>
         <div className="first-title">
-          >&nbsp; 公告信息
+          <Icon type="caret-right" style={{fontSize: 16, color: '#a4b7cc'}} />
+          &nbsp; 公告信息
           <div className="edit-option">
           <Button onClick={this.handleedit.bind(this)}>修改</Button>
           <Button onClick={this.handleSubmit.bind(this)}>保存</Button>
@@ -40,7 +41,9 @@ export default class incontrol extends React.Component {
                      disabled={this.state.disabled} />
         </div>
         <div className="first-title">
-          > &nbsp;历史公告信息
+          <Icon type="caret-right" style={{fontSize: 16, color: '#a4b7cc'}} />
+
+          &nbsp;&nbsp;历史公告信息
           <div className="annonuce-content">
             <div className="annonuce-past">
             1.XXXXXXX
