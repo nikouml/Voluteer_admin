@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Input, Popconfirm } from 'antd';
+import { Table, Input, Popconfirm,Icon } from 'antd';
 
 const columns = [
   { title: 'Name', dataIndex: 'name', key: 'name' },
@@ -46,7 +46,7 @@ export default class showactive extends React.Component{
       width: '40%',
       render: (text, record) => this.renderColumns(text, record, 'address'),
     }, {
-      title: 'operation',
+      title: 'Action',
       dataIndex: 'operation',
       render: (text, record) => {
         const { editable } = record;
@@ -115,9 +115,15 @@ export default class showactive extends React.Component{
   render(){
     return (
       <div>
-        <div className="first-title"> > 服务基地</div>
+        <div className="first-title">
+          <Icon type="caret-right" style={{fontSize: 16, color: '#a4b7cc'}} />
+
+          &nbsp;&nbsp;服务基地</div>
         <Table bordered dataSource={this.state.data} columns={this.columns} />
-        <div className="first-title">志愿达人显示</div>
+        <div className="first-title">
+          <Icon type="caret-right" style={{fontSize: 16, color: '#a4b7cc'}} />
+          &nbsp;&nbsp;
+          志愿达人显示</div>
         <div className="show-three-list">
           累计服务次数
           <Table

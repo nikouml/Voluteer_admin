@@ -1,7 +1,7 @@
 import React from 'react'
 import './index.css'
 import 'antd/dist/antd.css'
-import { Input, Button } from 'antd'
+import { Input, Button,Icon } from 'antd'
 const {TextArea} = Input
 
 export default class helpcontrl extends React.Component {
@@ -25,6 +25,8 @@ export default class helpcontrl extends React.Component {
     return (
       <div>
         <div className="front-title">
+          <Icon type="caret-right" style={{fontSize: 16, color: '#a4b7cc'}} />
+          &nbsp;&nbsp;
           帮助中心
         </div> <Button onClick={this.handleedit.bind(this)}>修改</Button>
           <div className="help-title">关于发布</div>
