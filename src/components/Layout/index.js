@@ -8,7 +8,7 @@ import { Layout, Menu, Icon } from 'antd';
 import 'antd/dist/antd.css'
 import path, {namesMap} from 'routerForm/index'
 
-const {HomePage, AsyncPage, welfare, icontrol, helpc, show} = namesMap
+const {HomePage, AsyncPage, welfare, icontrol, helpc, show,servicelist} = namesMap
 const {Header, Content, Footer, Sider} = Layout
 const SubMenu = Menu.SubMenu;
 
@@ -39,7 +39,10 @@ export default class LayoutContent extends React.Component {
             </Menu.Item>
             <Menu.Item key="2">
               <Icon type="video-camera" />
-              <span className="nav-text">服务项目管理</span>
+              <span className="nav-text">
+                <Link to={path(servicelist)}>
+                         服务项目管理
+                  </Link></span>
             </Menu.Item>
             <SubMenu
               key="sub1"

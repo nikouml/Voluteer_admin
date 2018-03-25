@@ -11,8 +11,11 @@ import path, {namesMap} from 'routerForm'
 import showactive from './inforcontrol/showlist'
 import helpcontrl from './inforcontrol/helpcenter'
 import persinfor from './inforcontrol/asyncDemo/person'
-
-const {HomePage, AsyncPage, Page404,welfare, icontrol, helpc, show, order, personc} = namesMap
+import ServiceList from './AppRouter/serviceProjectManage/serviceList/index'
+import ServiceUnpaaList from './AppRouter/serviceProjectManage/serviceUnpassList/index'
+import Activity from './AppRouter/serviceProjectManage/serviceList/activities/index'
+import ActivityUnpass from './AppRouter/serviceProjectManage/serviceUnpassList/activitisUnpass/index'
+const {HomePage, AsyncPage, Page404,welfare, icontrol, helpc, show, order, personc,servicelist,serviceunpasslist,activity,unpass} = namesMap
 
 const App = (props) => {
   const AsyncDemo = dynamic({component: () => System.import('./inforcontrol/asyncDemo')})
@@ -29,6 +32,12 @@ const App = (props) => {
         <Route path={path(helpc)} component={helpcontrl} />
         <Route path={path(personc)} component={persinfor} />
         <Route path={path(Page404)} component={NotFound} />
+        <Route path={path(servicelist)} component={ServiceList} />
+        <Route path={path(serviceunpasslist)} component={ServiceUnpaaList} />
+        <Route path={path(activity)} component={Activity} />
+        <Route path={path(unpass)} component={ActivityUnpass} />
+
+
         <Redirect from='*' to='/404' />
       </Switch>
     </Layout>

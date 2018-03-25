@@ -30,6 +30,22 @@ export default [
   {
     name: 'order',
     path: '/order'
+  },
+  {
+    name: 'servicelist',
+    path: '/servicelist'
+  },
+  {
+    name: 'serviceunpasslist',
+    path: '/serviceunpasslist'
+  },
+  {
+    name: 'activity',
+    path: '/activity/1'
+  },
+  {
+    name: 'unpass',
+    path: '/unpass/1'
   }
 ]
 
@@ -41,4 +57,8 @@ const helpc = 'helpc'
 const personc = 'personc'
 const show = 'show'
 const order = 'order'
-export {Page404, AsyncPage, welfare, icontrol, helpc, personc, show, order}
+const servicelist='servicelist'
+const serviceunpasslist='serviceunpasslist'
+const activity='activity'
+const unpass='unpass'
+export {Page404, AsyncPage, welfare, icontrol, helpc, personc, show, order,servicelist,serviceunpasslist,activity,unpass}
