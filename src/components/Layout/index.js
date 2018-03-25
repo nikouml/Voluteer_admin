@@ -58,11 +58,11 @@ export default class LayoutContent extends React.Component {
               key="sub2"
               title={<span><Icon type="pie-chart" /><span>系统管理</span></span>}
             >
-              <Menu.Item key="8">单位管理</Menu.Item>
-              <Menu.Item key="9">部门管理</Menu.Item>
-              <Menu.Item key="10">用户管理</Menu.Item>
-              <Menu.Item key="11">角色管理</Menu.Item>
-              <Menu.Item key="12">日志查询</Menu.Item>
+              <Menu.Item key="8"><Link to='/employer'>单位管理</Link></Menu.Item>
+              <Menu.Item key="9"><Link to='/department'>部门管理</Link></Menu.Item>
+              <Menu.Item key="10"><Link to='/user'>用户管理</Link></Menu.Item>
+              <Menu.Item key="11"><Link to='/role'>角色管理</Link></Menu.Item>
+              <Menu.Item key="12"><Link to='/log'>日志查询</Link></Menu.Item>
             </SubMenu>
 
 

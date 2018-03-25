@@ -8,6 +8,13 @@ import ordercon from './inforcontrol/welfare/order'
 import incontrol from './inforcontrol/publicinfor'
 import Layout from 'components/Layout'
 import path, {namesMap} from 'routerForm'
+import Login from 'components/AdminLogin/AdminLogin'
+import Employer from 'components/EmployerAdmin/EmployerAdmin'
+import Department from 'components/DepartmentAdmin/DepartmentAdmin'
+import User from 'components/UserAdmin/UserAdmin'
+import Role from 'components/RoleAdmin/RoleAdmin'
+import Log from 'components/LogSearch/LogSearch'
+import Info from 'components/Information/information'
 import showactive from './inforcontrol/showlist'
 import helpcontrl from './inforcontrol/helpcenter'
 import persinfor from './inforcontrol/asyncDemo/person'
@@ -20,11 +27,18 @@ const {HomePage, AsyncPage, Page404,welfare, icontrol, helpc, show, order, perso
 const App = (props) => {
   const AsyncDemo = dynamic({component: () => System.import('./inforcontrol/asyncDemo')})
   return (
-    <Layout>
-      <Switch>
+    <Switch>
+      <Route path='/login' component={Login} />
+      <Layout>
         <Route exact path='/' component={Homepage} />
         <Route path={path(HomePage)} component={Homepage} />
         <Route path={path(AsyncPage)} component={AsyncDemo} />
+        <Route path='/employer' component={Employer} />
+        <Route path='/department' component={Department} />
+        <Route path='/user' component={User} />
+        <Route path='/role' component={Role} />
+        <Route path='/log' component={Log} />
+        <Route path='/info' component={Info} />
         <Route path={path(welfare)} component={fuligood} />
         <Route path={path(order)} component={ordercon} />
         <Route path={path(icontrol)} component={incontrol} />
@@ -36,11 +50,9 @@ const App = (props) => {
         <Route path={path(serviceunpasslist)} component={ServiceUnpaaList} />
         <Route path={path(activity)} component={Activity} />
         <Route path={path(unpass)} component={ActivityUnpass} />
-
-
         <Redirect from='*' to='/404' />
-      </Switch>
-    </Layout>
+      </Layout>
+    </Switch>
   )
 }
 
