@@ -8,7 +8,7 @@ import { Layout, Menu, Icon } from 'antd';
 import 'antd/dist/antd.css'
 import path, {namesMap} from 'routerForm/index'
 
-const {HomePage, AsyncPage, welfare, icontrol, helpc, show} = namesMap
+const {HomePage, AsyncPage, welfare, icontrol, helpc, show,servicelist} = namesMap
 const {Header, Content, Footer, Sider} = Layout
 const SubMenu = Menu.SubMenu;
 
@@ -39,7 +39,10 @@ export default class LayoutContent extends React.Component {
             </Menu.Item>
             <Menu.Item key="2">
               <Icon type="video-camera" />
-              <span className="nav-text">服务项目管理</span>
+              <span className="nav-text">
+                <Link to={path(servicelist)}>
+                         服务项目管理
+                  </Link></span>
             </Menu.Item>
             <SubMenu
               key="sub1"
@@ -55,11 +58,11 @@ export default class LayoutContent extends React.Component {
               key="sub2"
               title={<span><Icon type="pie-chart" /><span>系统管理</span></span>}
             >
-              <Menu.Item key="8">单位管理</Menu.Item>
-              <Menu.Item key="9">部门管理</Menu.Item>
-              <Menu.Item key="10">用户管理</Menu.Item>
-              <Menu.Item key="11">角色管理</Menu.Item>
-              <Menu.Item key="12">日志查询</Menu.Item>
+              <Menu.Item key="8"><Link to='/employer'>单位管理</Link></Menu.Item>
+              <Menu.Item key="9"><Link to='/department'>部门管理</Link></Menu.Item>
+              <Menu.Item key="10"><Link to='/user'>用户管理</Link></Menu.Item>
+              <Menu.Item key="11"><Link to='/role'>角色管理</Link></Menu.Item>
+              <Menu.Item key="12"><Link to='/log'>日志查询</Link></Menu.Item>
             </SubMenu>
 
 
