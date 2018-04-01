@@ -18,10 +18,31 @@ class Search extends Component {
   // }
 
   handleMenuClick(e) {
-    message.info('Click on menu item.');
+    message.info('暂时无法搜索.');
     console.log('click', e);
   }
 
+  fetchSerch(){
+  fetch(' http://localhost:3333/apply/{vpId}', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(body)
+}).then((res) => {
+  return res.json()
+}).then((json) => {
+  if (json.code === 0) {
+    message.success('insert success')
+    this.setState({submitted: true})
+
+  } else {
+    message.error('failed')
+  }
+}).catch((e) => {
+  console.log(e.message)
+})
+}
   render() {
     const Search = Input.Search;
 

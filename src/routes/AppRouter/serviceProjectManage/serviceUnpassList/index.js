@@ -4,7 +4,28 @@ import Choose from '../../component/choose/index'
 import Search from '../../component/searchWithDate/index'
 import {Table, Icon, Divider,Dropdown,Menu} from 'antd';
 import {Link} from 'dva/router'
-
+const data = [{
+  key: '1',
+  name: '敬老爱老',
+  writer: 'cxy',
+  time: '2015年3月21日',
+  num: 1,
+  state: '待审核',
+}, {
+  key: '2',
+  name: '乘客疏导',
+  writer: 'dyx',
+  time: '2015年3月21日',
+  num: 2,
+  state: '待审核',
+}, {
+  key: '3',
+  name: '清扫楼道',
+  writer: 'ccc',
+  time: '2015年3月21日',
+  num: 3,
+  state: '待审核'
+}];
 
 
 class ServiceUnpassList extends Component{
@@ -84,27 +105,6 @@ const columns = [
     ),
   }];
 
-const data = [{
-  key: '1',
-  name: '敬老爱老',
-  writer: 'cxy',
-  time: '2015年3月21日',
-  num: 1,
-  state: '待审核',
-}, {
-  key: '2',
-  name: '乘客疏导',
-  writer: 'dyx',
-  time: '2015年3月21日',
-  num: 2,
-  state: '待审核',
-}, {
-  key: '3',
-  name: '清扫楼道',
-  writer: 'ccc',
-  time: '2015年3月21日',
-  num: 3,
-  state: '待审核'
-}];
+
 
 export default ServiceUnpassList

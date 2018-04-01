@@ -17,7 +17,7 @@ class Choose extends Component {
           <Link to="/servicelist"><span className="list">志愿服务项目</span></Link>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-          <Link to="/serviceunpasslist"><span className="desire">待审核需求(4)</span></Link>
+          <Link to="/serviceunpasslist"><span className="desire">待审核需求</span></Link>
         </div>
         <br/>
       </div>

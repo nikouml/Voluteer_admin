@@ -4,13 +4,19 @@
 import React from 'react'
 import { Link } from 'dva/router'
 import './index.less'
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu,  Icon} from 'antd';
 import 'antd/dist/antd.css'
 import path, {namesMap} from 'routerForm/index'
 
-const {HomePage, AsyncPage, welfare, icontrol, helpc, show,servicelist} = namesMap
+const {HomePage, AsyncPage, welfare, icontrol, helpc, show,servicelist,} = namesMap
 const {Header, Content, Footer, Sider} = Layout
 const SubMenu = Menu.SubMenu;
+
+function itemRender(route, params, routes, paths) {
+  const last = routes.indexOf(route) === routes.length - 1;
+  return last ? <span>{route.breadcrumbName}</span> : <Link to={paths.join('/')}>{route.breadcrumbName}</Link>;
+}
+
 
 export default class LayoutContent extends React.Component {
   state = {
@@ -77,6 +83,7 @@ export default class LayoutContent extends React.Component {
           </Link>
           <Content style={{margin: '24px 16px 0', overflow: 'initial'}}>
             <div style={{padding: 24, background: '#fff'}}>
+
               {this.props.children}
 
             </div>

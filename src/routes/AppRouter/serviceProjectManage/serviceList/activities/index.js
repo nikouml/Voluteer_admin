@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Icon,Input,Button,Table } from 'antd'
+import {Icon,Input,Button,Table,Breadcrumb } from 'antd'
 import {Link} from 'dva/router'
 import './index.css'
 // import request from "../../../../utils/request";
@@ -8,6 +8,22 @@ const titleStyle={fontSize:25,fontWeight:'bold',marginLeft:50}
 const SecondtitleStyle={fontSize:15,fontWeight:'bold',marginLeft:50}
 
 
+
+
+const routes = [
+  // {  path: '/home',
+  // breadcrumbName: '首页'},
+  {
+    path: '/servicelist',
+    breadcrumbName: '服务项目管理'
+  }, {
+    path: '/activity',
+    breadcrumbName: '项目详情'
+  }];
+function itemRender(route, params, routes, paths) {
+  const last = routes.indexOf(route) === routes.length - 1;
+  return last ? <span>{route.breadcrumbName}</span> : <Link to={paths.join('/')}>{route.breadcrumbName}</Link>;
+}
 
 
 
@@ -99,6 +115,7 @@ class Activity extends Component {
     return (
       <div>
         <div>
+          <Breadcrumb itemRender={itemRender} routes={routes} />
           <Icon type="caret-right"/> <span className="firstTitle" >  需求服务信息详情</span> <br/> <br/>
           <br/> <span>项目名称：敬老爱老</span>
           <br/> <span>报名时间：2018年2月1日至2018年2月10日</span>
