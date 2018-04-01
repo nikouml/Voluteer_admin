@@ -4,24 +4,51 @@
 import React from 'react'
 import { Link } from 'dva/router'
 import './index.less'
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu, Icon, Button, message } from 'antd';
 import 'antd/dist/antd.css'
 import path, {namesMap} from 'routerForm/index'
+import axios from 'axios'
 
-const {HomePage, AsyncPage, welfare, icontrol, helpc, show,servicelist} = namesMap
+const {HomePage, AsyncPage, welfare, icontrol, helpc, show, servicelist} = namesMap
 const {Header, Content, Footer, Sider} = Layout
 const SubMenu = Menu.SubMenu;
 
 export default class LayoutContent extends React.Component {
-  state = {
-    collapsed: false,
+  constructor (props)
+  {
+    super(props)
+    this.state = {
+      collapsed: false,
+      name: '',
+      avatar: '',
+      roles: '',
+      token: ''
+    }
   }
   onCollapse = (collapsed) => {
     // console.log(collapsed)
     this.setState({collapsed})
   }
 
+  componentWillMount () {
+    axios.defaults.headers.common['token'] = localStorage.getItem('token') || ''
+    axios.get(`http://volunteer.andyhui.xin/adminInfo/`)
+      .then(res => {
+        if (res.data.code === 1000) {
+          console.log(res)
+          this.setState({
+            name: res.data.name,
+            avatar: res.data.avatar,
+            roles: res.data.roles
+          })
+        } else if (res.data.code === 1013) {
+          message.error('非管理员用户')
+        }
+    })
+  }
+
   render () {
+    const {avatar, roles, name} = this.state
     return (
       <Layout>
         <Sider style={{overflow: 'auto', height: '100vh', position: 'fixed', left: 0}}
@@ -71,10 +98,16 @@ export default class LayoutContent extends React.Component {
 
         <Layout style={{marginLeft: 200}}>
           <Link to={path(HomePage)}>
-            <Header style={{background: '#fff', padding: 0, textAlign: 'center', fontSize: 20}}>
+            <Header style={{background: '#fff', padding: 5, fontSize: 30}}>
               仓山区党员志愿服务平台
             </Header>
           </Link>
+          <div className='show'>
+            <img className='icon' style={{width: 30, height: 30, marginRight: 20}} src={avatar}></img>
+            <span>欢迎{name}用户{roles}</span>
+            <a href="">个人设置</a>
+            <Button>退出</Button>
+          </div>
           <Content style={{margin: '24px 16px 0', overflow: 'initial'}}>
             <div style={{padding: 24, background: '#fff'}}>
               {this.props.children}
