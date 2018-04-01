@@ -33,12 +33,12 @@ const menu = (
 )
 const Search = Input.Search
 const columns = [
-  {title: 'Date', dataIndex: 'date', key: 'date'},
-  {title: 'Name', dataIndex: 'name', key: 'name'},
-  {title: 'Status', key: 'state', render: () => <span><Badge status="success" />Finished</span>},
-  {title: 'Upgrade Status', dataIndex: 'upgradeNum', key: 'upgradeNum'},
+  {title: '序号', dataIndex: 'date', key: 'date'},
+  {title: '活动名称', dataIndex: 'name', key: 'name'},
+  {title: '发布时间', key: 'state', render: () => <span><Badge status="success" />Finished</span>},
+  {title: '活动状态', dataIndex: 'upgradeNum', key: 'upgradeNum'},
   {
-    title: 'Action',
+    title: '操作',
     dataIndex: 'operation',
     key: 'operation',
     render: () => (

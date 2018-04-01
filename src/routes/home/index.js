@@ -4,8 +4,59 @@ import routerPush from 'utils/routerPush'
 import { Input, Icon } from 'antd'
 import { namesMap } from 'routerForm'
 import ReactEcharts from 'echarts-for-react'
+import { Map, Marker, NavigationControl, InfoWindow } from 'react-bmap'
+// import {Map, Marker} from '../../../src'
+import {simpleMapStyle} from './mapstyle'
 import './index.css'
 
+
+var markers = [
+  {
+    lng: 116.402544,
+    lat: 39.928216
+  },
+  {
+    lng: 119.0874,
+    lat: 36.665582
+  },
+  {
+    lng: 112.538537,
+    lat: 37.874899
+  },
+  {
+    lng: 114.501011,
+    lat: 33.920864
+  },
+  {
+    lng: 109.210063,
+    lat: 34.339622
+  },
+  {
+    lng: 99.430831,
+    lat: 38.211366
+  },
+  {
+    lng: 89.430831,
+    lat: 33.311366
+  },
+  {
+    lng: 99.430831,
+    lat: 32.511366
+  },
+  {
+    lng: 79.430831,
+    lat: 35.611366
+  },
+  {
+    lng: 83.430831,
+    lat: 39.711366
+  },
+];
+
+const CustomControl = (props) => {
+  let map = props.map;
+  return <div onClick={()=>{map.setZoom(map.getZoom() + 2)}} style={{position: 'absolute', right: '10px', top: '10px',  color: 'white', background: 'blue'}}>放大2级</div>
+}
 @routerPush
 @immutableRenderDecorator
 export default class HomePage extends PureComponent {
@@ -174,7 +225,25 @@ export default class HomePage extends PureComponent {
           <Icon type="caret-right" style={{fontSize: 16, color: '#a4b7cc'}} /> 服务网点概况
         </div>
         <div className="map-show">
-          百度地图调用
+          <Map center={{lng: 113.279814, lat: 26.053599}} zoom="11"
+               mapStyle={simpleMapStyle}>
+            <Marker position={{lng: 113.279814, lat: 26.053599}}
+                    icon="simple_red"
+                    events={{
+                      click: () => {
+                        console.log('marker click event');
+                      }
+                    }}/>
+            <Marker position={{lng: 113.279810, lat: 26.053580}} icon="simple_blue" />
+            <Marker position={{lng: 113.279820, lat: 26.053583}} icon="loc_blue" />
+            <Marker position={{lng: 113.279830, lat: 26.053587}} icon="loc_red" />
+            <Marker position={{lng: 113.279840, lat: 26.053593}} icon="start" />
+            <Marker position={{lng: 113.279850, lat: 26.053596}} icon="end" />
+            <NavigationControl />
+            <InfoWindow position={{lng: 113.279814, lat: 26.053599}}
+                        text="志愿活动" title="正在进行" />
+          </Map>
+
         </div>
         <div className="depart-server">
           <div className="first-title">

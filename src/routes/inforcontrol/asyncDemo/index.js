@@ -22,41 +22,69 @@ const Option = Select.Option
 
 const Search = Input.Search
 const columns = [{
-  title: 'Name',
+  title: '序号',
+  dataIndex: 'num',
+}, {
+  title: '姓名',
   dataIndex: 'name',
 }, {
-  title: 'Age',
-  dataIndex: 'age',
-}, {
-  title: 'Address',
+  title: '昵称',
   dataIndex: 'address',
+  width:'100',
 }, {
-  title: 'Action',
-  key: 'operation',
-  fixed: 'right',
-  width: 100,
-  render: () => (
-    <Link to={path(personc)}>
-      {/*<span className="table-operation">*/}
-            {/*<a href="#">Pause</a>*/}
-            {/*<a href="#">Stop</a>*/}
-            {/*<Dropdown overlay={menu}>*/}
-              {/*<a href="#">*/}
-                More <Icon type="down" />
-              {/*</a>*/}
-            {/*</Dropdown>*/}
-          {/*</span>*/}
-    </Link>
-  ),
-}]
+  title: '身份证号码',
+  dataIndex: 'idcard',
+  width:'100',
+}, {
+  title: '身份类型',
+  dataIndex: 'idtype',
+},{
+  title:'累计服务时长',
+  dataIndex:'servertime',
+},{
+  title:'累计服务次数',
+  dataIndex:'times',
+},{
+  title:'累计服务星级个数',
+  dataIndex:'star',
+},{
+  title:'注册时间',
+  dataIndex:'register',
+},
+  {
+    title: 'Action',
+    key: 'operation',
+    fixed: 'right',
+    width: 100,
+    render: () => (
+      <Link to={path(personc)}>
+        {/*<span className="table-operation">*/}
+        {/*<a href="#">Pause</a>*/}
+        {/*<a href="#">Stop</a>*/}
+        {/*<Dropdown overlay={menu}>*/}
+        {/*<a href="#">*/}
+        More <Icon type="down" />
+        {/*</a>*/}
+        {/*</Dropdown>*/}
+        {/*</span>*/}
+      </Link>
+    ),
+  }]
 
 const data = []
 for (let i = 0; i < 46; i++) {
   data.push({
     key: i,
+    num: `${i}`,
     name: `Edward King ${i}`,
     age: 32,
     address: `London, Park Lane no. ${i}`,
+    idcard: '111111111111111111',
+    idtype: '党员',
+    servertime: '10H',
+    times: '10',
+    star:'11',
+    register:'2018年2月1日',
   })
 }
 
