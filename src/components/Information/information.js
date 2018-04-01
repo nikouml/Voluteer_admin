@@ -98,7 +98,7 @@ class Info extends React.Component {
           {...formItemLayout}
           label='新登录密码'
         >
-          {getFieldDecorator('password', {
+          {getFieldDecorator('newPassword', {
             rules: [{
               required: true, message: 'Please input your password!',
             }, {

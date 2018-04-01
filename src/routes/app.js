@@ -50,7 +50,6 @@ const App = (props) => {
         <Route path={path(serviceunpasslist)} component={ServiceUnpaaList} />
         <Route path={path(activity)} component={Activity} />
         <Route path={path(unpass)} component={ActivityUnpass} />
-        <Redirect from='*' to='/404' />
       </Layout>
     </Switch>
   )

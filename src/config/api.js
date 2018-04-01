@@ -1,3 +1,4 @@
 export default {
-  demo: '/demo'
+  demo: '/demo',
+  basePath: 'http://volunteer.andyhui.xin'
 }
