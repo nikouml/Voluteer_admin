@@ -27,6 +27,7 @@ class Login extends React.Component {
           password: values.password
         }).then(res => {
           localStorage.setItem('token', res.data.token)
+          localStorage.setItem('user_id',res.data.user_id)
           this.setState({loading: false})
           if (res.data.code === 1000) {
             message.success('登录成功')
