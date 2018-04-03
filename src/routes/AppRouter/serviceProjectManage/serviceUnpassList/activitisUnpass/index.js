@@ -1,105 +1,93 @@
 import React, { Component } from 'react'
-import { Icon, Button } from 'antd'
+import { Icon, Button, message } from 'antd'
+import axios from 'axios/index'
 
 export default class ActivityUnpass extends Component {
   constructor (props) {
     super(props)
-    this.state = {}
-    this.handSubmit1 =this.handSubmit1.bind(this)
-  }
-
-  handSubmit1 (e) {
-    e.preventDefault()
-
-    const body = {
-      vp_id: values.id,
-      user_id: values.id
-    }
-    fetch('http://syb.andyhui.xin/apply/deal/single', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'token': localStorage.token
-      },
-      body: JSON.stringify(body)
-    }).then((res) => {
-      return res.json()
-    }).then((json) => {
-      if (json.code === 0) {
-        message.success('insert success')
-      } else {
-        message.error('failed')
+    this.state = {
+      dataSource: {
+        title: '',
+        join_start_at: '',
+        start_at: '',
+        end_at: '',
+        service_length: '',
+        position_name: '',
+        has_people_num: '',
+        content: '',
+        user_name: ''
       }
-    }).catch((e) => {
-      console.log(e.message)
-    })
-  }
-
-  handSumbit2(e){
-
-      e.preventDefault()
-
-      // const body = {
-      //   vp_id: values.id,
-      //   user_id: values.id
-      // }
-      fetch('http://syb.andyhui.xin/apply/deal/single', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'token': localStorage.token
-        },
-        body: JSON.stringify(body)
-      }).then((res) => {
-        return res.json()
-      }).then((json) => {
-        if (json.code === 0) {
-          message.success('审核通过')
-        } else {
-          message.error('审核失败，请联系韩笑 ')
-        }
-      }).catch((e) => {
-        console.log(e.message)
-      })
-  }
+    }
+    this.getServer = this.getServer.bind(this)
+    this.handlSubmit = this.handlSubmit.bind(this)
+    }
 
 
-  render () {
-    const titleStyle = {fontSize: 35, fontWeight: 'bold', marginLeft: 50}
-    const SecondtitleStyle = {fontSize: 25, fontWeight: 'bold', marginLeft: 50}
+    componentWillMount()
+    {
+      console.log(this.props.match)
+      this.getServer()
+    }
 
-    return (
-      <div>
+    getServer()
+    {
+      axios.get(`http://volunteer.andyhui.xin/vps/${this.props.match.params.id}`)
+        .then(res => {
+          console.log('123')
+          console.log(res.data.vpInfo)
+          const dataSource= {
+            title: res.data.vpInfo.title,
+            join_start_at: res.data.vpInfo.join_start_at,
+            start_at: res.data.vpInfo.start_at,
+            end_at: res.data.vpInfo.end_at,
+            service_length: res.data.vpInfo.service_length,
+            position_name: res.data.vpInfo.position_name,
+            has_people_num: res.data.vpInfo.has_people_num,
+            content: res.data.vpInfo.content,
+            user_name: res.data.vpInfo.user_name
+
+          }
+          this.setState({dataSource:dataSource})
+          // console.log(this.props)
+        })
+    }
+
+    handlSubmit(){
+
+    }
+
+    render()
+    {
+      return (
         <div>
-          <Icon type="caret-right" /> <span className="firstTitle">需求服务信息详情</span> <br /> <br />
-          <br /> <span>项目名称：敬老爱老</span>
-          <br /> <span>报名时间：2018年2月1日至2018年2月10日</span>
-          <br /> <span>活动时长：2018年2月13日9:00-12:00</span>
-          <br /> <span>服务时长：3小时</span>
-          <br /> <span>活动地点：福州市第二社会福利院</span>
-          <br /> <span>报名人数：10人</span>
-          <br /> <span>描述说明：到福利院开展"敬老爱老"活动</span>
-          <br /> <span>发起人：晓明</span> <br /> <br /> <br />
-        </div>
+          <div>
+            <Icon type="caret-right" /> <span className="firstTitle">需求服务信息详情</span> <br /> <br />
+            <br /> <span>项目名称：{this.state.dataSource.title}</span>
+            <br /> <span>报名时间：{this.state.dataSource.join_start_at}</span>
+            <br /> <span>活动开始：{this.state.dataSource.start_at}</span>
+            <br /> <span>活动结束：{this.state.dataSource.end_at}</span>
+            <br /> <span>服务时长：{this.state.dataSource.service_length}小时</span>
+            <br /> <span>活动地点：{this.state.dataSource.position_name}</span>
+            <br /> <span>报名人数：{this.state.dataSource.has_people_num}</span>
+            <br /> <span>描述说明：{this.state.dataSource.content}</span>
+            <br /> <span>发起人：{this.state.dataSource.user_name}</span> <br /> <br /> <br />
+          </div>
+          {/*<div>*/}
+          {/*<Icon type="caret-right" /><span className="firstTitle">影像库（视频或照片）</span>*/}
+          {/*<br />*/}
+          {/*<img src={require('../../../../../images/3.png')} width={200} height={200}*/}
+          {/*style={{float: 'left', marginLeft: 300}} />*/}
+          {/*<br />*/}
+          {/*<img src={require('../../../../../images/4.png')} width={200} height={200}*/}
+          {/*style={{float: 'left', marginLeft: 100}} />*/}
 
-        <div>
-          <Icon type="caret-right" /><span className="firstTitle">影像库（视频或照片）</span>
-          <br />
-          <img src={require('../../../../../images/3.png')} width={200} height={200}
-               style={{float: 'left', marginLeft: 300}} />
-          <br />
-          <img src={require('../../../../../images/4.png')} width={200} height={200}
-               style={{float: 'left', marginLeft: 100}} />
-
-          <br /> <br /> <br />
+          {/*<br /> <br /> <br />*/}
+          {/*</div>*/}
+          <div style={{marginTop: 100}}>
+            <Button type="primary" size={'large'} style={{marginLeft: 300}}>通过审核</Button>
+            <Button type="primary" size={'large'} style={{marginLeft: 100}}>拒绝审批</Button>
+          </div>
         </div>
-        <div style={{marginTop: 100}}>
-          <Button type="primary" size={'large'} style={{marginLeft: 300}} onClick={this.handSumit1}>通过审核</Button>
-          <Button type="primary" size={'large'} style={{marginLeft: 100}} onClick={this.handSumit2}>拒绝审批</Button>
-
-        </div>
-      </div>
-    )
+      )
+    }
   }
-
-}

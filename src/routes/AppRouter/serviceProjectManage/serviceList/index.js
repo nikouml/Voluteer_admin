@@ -15,18 +15,28 @@ class ServiceList extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      Servers: [
-        {
-          id: '1',
-          title: '敬老爱老',
-          user_name: 'cxy',
-          start_at: '2015年3月21日',
-          status: '0',
-          people: '10/20',
-          people_num: 1,
-        }
-      ]
-
+      vpList: {
+        total: 1,
+        per_page: 5,
+        current_page: 1,
+        last_page: 1,
+        next_page_url: null,
+        prev_page_url: null,
+        from: 1,
+        to: 1,
+        dataSource: [
+          {
+            key: '1',
+            id: '1',
+            title: '敬老爱老',
+            user_name: 'cxy',
+            start_at: '2015年3月21日',
+            status: '0',
+            people: '1',
+            people_num: 1,
+          }
+        ]
+      }
     }
     this.getServer = this.getServer.bind(this)
   }
@@ -36,19 +46,29 @@ class ServiceList extends Component {
   }
 
   getServer () {
-    console.log('123')
-    axios.get(` http://volunteer.andyhui.xin/vps/list/{status}`)
-      .then( res => {
-        const Servers = [...this.state.Servers]
-        this.setState({Servers: Servers})
-        console.log(this.state)
+    axios.get(`http://volunteer.andyhui.xin/vps/list/{status}`)
+      .then(res => {
+        console.log("123")
+        console.log(res.data)
+        const dataSource = [
+          {
+            key: 1,
+            id: res.data.vpList.data.id,
+            title: res.data.vpList.data.title,
+            user_name: res.data.vpList.data.user_name,
+            start_at: res.data.vpList.data.start_at,
+            status: res.data.vpList.data.status,
+            people: res.data.vpList.data.people_num,
+            people_num: res.data.vpList.data.has_people_num,
+          }
+        ]
+        this.setState({dataSource: dataSource})
+        console.log(res.data.vpList)
       })
   }
 
-
   render () {
     const searchContent = ['正在报名', '正在进行', '已结束', '发布人']
-
     const columns = [
       {
         title: '序号',
@@ -82,6 +102,11 @@ class ServiceList extends Component {
         key: 'people'
       },
       {
+        title:'已参加人数',
+        dataIndex:'has_people',
+        key:'people_num'
+      },
+      {
         title: '操作',
         key: 'action',
         render: (text, record) => (
@@ -103,7 +128,7 @@ class ServiceList extends Component {
         <Choose />
         <Search searchContent={searchContent} />
         <div className="show">
-          <Table columns={columns} dataSource={this.state.Servers} />
+          <Table columns={columns} dataSource={this.state.dataSource} />
         </div>
       </div>
 

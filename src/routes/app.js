@@ -28,10 +28,10 @@ const App = (props) => {
   const AsyncDemo = dynamic({component: () => System.import('./inforcontrol/asyncDemo')})
   return (
     <Switch>
-      <Route path='/login' component={Login} />
+      <Route exact path='/' component={Login} />
       <Layout>
-        <Route exact path='/' component={Homepage} />
-        <Route path={path(HomePage)} component={Homepage} />
+        <Route path='/home' component={Homepage} />
+        {/*<Route path={path(HomePage)} component={Homepage} />*/}
         <Route path={path(AsyncPage)} component={AsyncDemo} />
         <Route path='/employer' component={Employer} />
         <Route path='/department' component={Department} />

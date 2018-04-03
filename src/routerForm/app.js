@@ -45,7 +45,11 @@ export default [
   },
   {
     name: 'unpass',
-    path: '/unpass/1'
+    path: '/unpass/:id'
+  },
+  {
+    name:'home',
+    path:'/home'
   }
 ]
 
@@ -61,4 +65,5 @@ const servicelist='servicelist'
 const serviceunpasslist='serviceunpasslist'
 const activity='activity'
 const unpass='unpass'
-export {Page404, AsyncPage, welfare, icontrol, helpc, personc, show, order,servicelist,serviceunpasslist,activity,unpass}
+const home ='home'
+export {Page404, AsyncPage, welfare, icontrol, helpc, personc, show, order,servicelist,serviceunpasslist,activity,unpass,home}

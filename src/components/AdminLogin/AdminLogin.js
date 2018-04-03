@@ -30,7 +30,7 @@ class Login extends React.Component {
           this.setState({loading: false})
           if (res.data.code === 1000) {
             message.success('登录成功')
-            this.props.history.push('/')
+            this.props.history.push('/home')
           } else if (res.data.code === 1005) {
             message.error('密码错误')
           } else if (res.data.code === 1003) {

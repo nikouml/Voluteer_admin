@@ -41,13 +41,19 @@ export default class LayoutContent extends React.Component {
     axios.get(`http://volunteer.andyhui.xin/adminInfo/`)
       .then(res => {
         if (res.data.code === 1000) {
-          console.log(res)
           this.setState({
             name: res.data.name,
             avatar: res.data.avatar,
-            roles: res.data.roles
+            roles: res.data.roles,
+            token: res.data.token
           })
         } else if (res.data.code === 1013) {
+          console.log(res)
+
+
+
+
+
           message.error('非管理员用户')
         }
     })
@@ -108,7 +114,7 @@ export default class LayoutContent extends React.Component {
               仓山区党员志愿服务平台
             </Header>
           </Link>
-          <div className='show'>
+          <div className='showinfor'>
             <img className='icon' style={{width: 30, height: 30, marginRight: 20}} src={avatar}></img>
             <span>欢迎{name}用户{roles}</span>
             <a href="">个人设置</a>

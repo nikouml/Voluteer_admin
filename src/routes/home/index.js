@@ -4,58 +4,41 @@ import routerPush from 'utils/routerPush'
 import { Input, Icon } from 'antd'
 import { namesMap } from 'routerForm'
 import ReactEcharts from 'echarts-for-react'
-import { Map, Marker, NavigationControl, InfoWindow } from 'react-bmap'
-// import {Map, Marker} from '../../../src'
+// import { Map, Marker, NavigationControl, InfoWindow } from 'react-bmap'
+import {Map, NavigationControl, MapTypeControl, ScaleControl, OverviewMapControl,Marker} from 'react-bmap'
 import {simpleMapStyle} from './mapstyle'
 import './index.css'
 
 
-var markers = [
+let  markers = [
   {
-    lng: 116.402544,
-    lat: 39.928216
+    lng: 119.279498,
+    lat:26.053751
   },
   {
-    lng: 119.0874,
-    lat: 36.665582
+    lng: 119.2611,
+    lat: 26.068291
   },
   {
-    lng: 112.538537,
-    lat: 37.874899
+    lng: 119.2611,
+    lat: 26.068291
   },
   {
-    lng: 114.501011,
-    lat: 33.920864
+    lng: 119.253627,
+    lat: 26.044078
   },
   {
-    lng: 109.210063,
-    lat: 34.339622
+    lng: 119.25722,
+    lat: 26.05018
   },
   {
-    lng: 99.430831,
-    lat: 38.211366
-  },
-  {
-    lng: 89.430831,
-    lat: 33.311366
-  },
-  {
-    lng: 99.430831,
-    lat: 32.511366
-  },
-  {
-    lng: 79.430831,
-    lat: 35.611366
-  },
-  {
-    lng: 83.430831,
-    lat: 39.711366
+    lng:119.272671,
+    lat:26.056964
   },
 ];
-
 const CustomControl = (props) => {
   let map = props.map;
-  return <div onClick={()=>{map.setZoom(map.getZoom() + 2)}} style={{position: 'absolute', right: '10px', top: '10px',  color: 'white', background: 'blue'}}>放大2级</div>
+  return <div onClick={()=>{map.setZoom(map.getZoom() + 1)}} style={{position: 'absolute', right: '10px', top: '10px',  color: 'white', background: 'blue'}}>放大2级</div>
 }
 @routerPush
 @immutableRenderDecorator
@@ -66,7 +49,12 @@ export default class HomePage extends PureComponent {
       value: 0
     }
   }
-
+  get options() {
+    return ['anchor', 'offset', 'type', 'showZoomInfo', 'enableGeolocation'];
+  }
+  getControl() {
+    return new BMap.NavigationControl(this.getOptions(this.options));
+  }
   getOption = () => ({
     title: {
       text: '项目服务'
@@ -225,24 +213,46 @@ export default class HomePage extends PureComponent {
           <Icon type="caret-right" style={{fontSize: 16, color: '#a4b7cc'}} /> 服务网点概况
         </div>
         <div className="map-show">
-          <Map center={{lng: 113.279814, lat: 26.053599}} zoom="11"
-               mapStyle={simpleMapStyle}>
-            <Marker position={{lng: 113.279814, lat: 26.053599}}
-                    icon="simple_red"
-                    events={{
-                      click: () => {
-                        console.log('marker click event');
-                      }
-                    }}/>
-            <Marker position={{lng: 113.279810, lat: 26.053580}} icon="simple_blue" />
-            <Marker position={{lng: 113.279820, lat: 26.053583}} icon="loc_blue" />
-            <Marker position={{lng: 113.279830, lat: 26.053587}} icon="loc_red" />
-            <Marker position={{lng: 113.279840, lat: 26.053593}} icon="start" />
-            <Marker position={{lng: 113.279850, lat: 26.053596}} icon="end" />
-            <NavigationControl />
-            <InfoWindow position={{lng: 113.279814, lat: 26.053599}}
-                        text="志愿活动" title="正在进行" />
+          <Map center = {{
+            lng: 119.279282,
+            lat: 26.052323
+          }}
+               zoom = '16'
+               // mapStyle={simpleMapStyle}
+          >
+            <Marker
+              position={{lng: 119.279282, lat: 26.052323}}
+              icon="simple_red"
+              events={{
+                click: () => {
+                  console.log('marker click event');
+                }
+              }}
+            />
+            <Marker position={{lng: 119.282875, lat: 26.052712}} icon="simple_blue" />
+            <Marker position={{lng: 119.276336, lat: 26.049336}} icon="loc_blue" />
+            <Marker position={{lng: 119.272455, lat: 26.057029}} icon="loc_red" />
+            <Marker position={{lng: 119.286109, lat: 26.056153}} icon="start" />
+            <Marker position={{lng: 119.277629, lat: 26.059398}} icon="end" />
           </Map>
+          {/*<Map center={{*/}
+            {/*lng: 119.279282,*/}
+            {/*lat: 26.052323*/}
+          {/*}}*/}
+               {/*zoom='16'*/}
+               {/*// mapStyle={simpleMapStyle}*/}
+            {/*>*/}
+            {/*<div style={{position: 'absolute', left: '10px', top: '10px',  color: 'white', background: 'blue'}}>自定义组件</div>*/}
+            {/*<CustomControl />*/}
+            {/*{markers.map((marker, index) => {*/}
+              {/*var icon = "red" + (index + 1);*/}
+              {/*return <Marker map={this.props.map} icon={icon} position={{lng: marker.lng, lat: marker.lat}} {...marker} key={index}/>*/}
+            {/*})}*/}
+            {/*<NavigationControl />*/}
+            {/*/!*<MapTypeControl />*!/*/}
+            {/*/!*<ScaleControl />*!/*/}
+            {/*/!*<OverviewMapControl />*!/*/}
+          {/*</Map>*/}
 
         </div>
         <div className="depart-server">
