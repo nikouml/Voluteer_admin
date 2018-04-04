@@ -121,7 +121,7 @@ class LayoutContent extends React.Component {
           <div className='showinfor'>
             <img className='icon' style={{width: 30, height: 30, marginRight: 20}} src={avatar}></img>
             <span>欢迎{name}用户{roles}</span>
-            <Link to={path(HomePage)}>个人设置</Link>
+            <Link to='/info'>个人设置</Link>
             <Button onClick={this.handlOut}>退出</Button>
           </div>
           <Content style={{margin: '24px 16px 0', overflow: 'initial'}}>
