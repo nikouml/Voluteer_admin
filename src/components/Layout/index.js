@@ -8,6 +8,8 @@ import { Layout, Menu, Icon, Button, message } from 'antd';
 import 'antd/dist/antd.css'
 import path, {namesMap} from 'routerForm/index'
 import axios from 'axios'
+import {withRouter} from 'dva/router'
+
 
 const {HomePage, AsyncPage, welfare, icontrol, helpc, show, servicelist} = namesMap
 const {Header, Content, Footer, Sider} = Layout
@@ -19,7 +21,7 @@ function itemRender(route, params, routes, paths) {
 }
 
 
-export default class LayoutContent extends React.Component {
+class LayoutContent extends React.Component {
   constructor (props)
   {
     super(props)
@@ -30,13 +32,17 @@ export default class LayoutContent extends React.Component {
       roles: '',
       token: ''
     }
+    this.handlOut = this.handlOut.bind(this)
+
   }
+
+
   onCollapse = (collapsed) => {
-    // console.log(collapsed)
     this.setState({collapsed})
   }
 
   componentWillMount () {
+    console.log(this.props)
     axios.defaults.headers.common['token'] = localStorage.getItem('token') || ''
     axios.get(`http://volunteer.andyhui.xin/adminInfo/`)
       .then(res => {
@@ -49,14 +55,12 @@ export default class LayoutContent extends React.Component {
           })
         } else if (res.data.code === 1013) {
           console.log(res)
-
-
-
-
-
           message.error('非管理员用户')
         }
     })
+  }
+  handlOut(){
+   this.props.history.push('/')
   }
 
   render () {
@@ -117,8 +121,8 @@ export default class LayoutContent extends React.Component {
           <div className='showinfor'>
             <img className='icon' style={{width: 30, height: 30, marginRight: 20}} src={avatar}></img>
             <span>欢迎{name}用户{roles}</span>
-            <a href="">个人设置</a>
-            <Button>退出</Button>
+            <Link to={path(HomePage)}>个人设置</Link>
+            <Button onClick={this.handlOut}>退出</Button>
           </div>
           <Content style={{margin: '24px 16px 0', overflow: 'initial'}}>
             <div style={{padding: 24, background: '#fff'}}>
@@ -135,3 +139,6 @@ export default class LayoutContent extends React.Component {
     )
   }
 }
+
+
+export default withRouter(LayoutContent)
