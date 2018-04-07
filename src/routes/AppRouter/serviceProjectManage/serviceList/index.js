@@ -66,8 +66,8 @@ class ServiceList extends Component {
       },
       {
         title: '活动名称',
-        dataIndex: 'aname',
-        key: 'aname',
+        dataIndex: 'name',
+        key: 'name',
         render: text => <a href="#">{text}</a>,
       },
       {
@@ -77,8 +77,8 @@ class ServiceList extends Component {
       },
       {
         title: '发布时间',
-        dataIndex: 'start_time',
-        key: 'start_time',
+        dataIndex: 'time',
+        key: 'time',
       },
       {
         title: '活动状态',
@@ -103,7 +103,8 @@ class ServiceList extends Component {
       {/*<a href="#">{record.name}</a>*/}
             {/*<Divider type="vertical" />*/}
             <Link to="/activity/1" className="ant-dropdown-link">
-
+               {/*应获取一个id值，以此id数值作为url*/}
+              {/*怎么在路由表添加一个动态路由*/}
               详情 <Icon type="down" />
       </Link>
     </span>
