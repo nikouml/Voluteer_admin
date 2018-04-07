@@ -65,7 +65,6 @@ export default class ActivityUnpass extends Component {
     const URL='http://volunteer.andyhui.xin/vps/'+ID
     // const URL='http://volunteer.andyhui.xin/vps'+ID
     const token=localStorage.token
-
     const config={
       method:'post',
       url:URL,
