@@ -15,11 +15,17 @@ export default class ActivityUnpass extends Component {
         position_name: '',
         has_people_num: '',
         content: '',
-        user_name: ''
-      }
+        user_name: '',
+        status:'',
+      },
+
+      disabled:false,
+
+      loading:false
     }
     this.getServer = this.getServer.bind(this)
     this.handlSubmit = this.handlSubmit.bind(this)
+    this.handlSubmit2 = this.handlSubmit2.bind(this)
     }
 
 
@@ -44,15 +50,24 @@ export default class ActivityUnpass extends Component {
             position_name: res.data.vpInfo.position_name,
             has_people_num: res.data.vpInfo.has_people_num,
             content: res.data.vpInfo.content,
-            user_name: res.data.vpInfo.user_name
+            user_name: res.data.vpInfo.user_name,
+            status: res.data.vpInfo.status
 
           }
           this.setState({dataSource:dataSource})
-          // console.log(this.props)
         })
     }
 
     handlSubmit(){
+      this.setState({dataSource: {...this.state.dataSource, status: 1}}, () => {
+        console.log(this.state)
+      },)
+      this.setState({loading:true,disabled:true})
+      message.success("审核成功")
+    }
+    handlSubmit2(){
+    this.setState({dataSource: {...this.state.dataSource, status: 1}},{loading: true},{disabled: true})
+      message.success("审核成功")
 
     }
 
@@ -84,8 +99,26 @@ export default class ActivityUnpass extends Component {
           {/*<br /> <br /> <br />*/}
           {/*</div>*/}
           <div style={{marginTop: 100}}>
-            <Button type="primary" size={'large'} style={{marginLeft: 300}}>通过审核</Button>
-            <Button type="primary" size={'large'} style={{marginLeft: 100}}>拒绝审批</Button>
+            <Button onClick={this.handlSubmit}
+                    className="shenghe"
+                    icon="check"
+                    type="primary"
+                    size={'large'}
+                    loading={this.state.loading}
+                    disabled={this.state.submitted}
+                    style={{marginLeft: 300}}>
+              {this.state.disabled ? '审核成功' : '通过审核'}
+            </Button>
+            <Button onClick={this.handlSubmit2}
+                    className="shenghe"
+                    icon="close"
+                    type="primary"
+                    loading={this.state.loading}
+                    disabled={this.state.submitted}
+                    size={'large'}
+                    style={{marginLeft: 100}}>
+              {this.state.disabled ? '审核成功' : '拒绝审核'}
+            </Button>
           </div>
         </div>
       )

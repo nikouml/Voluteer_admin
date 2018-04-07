@@ -15,28 +15,15 @@ class ServiceList extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      vpList: {
-        total: 1,
-        per_page: 5,
-        current_page: 1,
-        last_page: 1,
-        next_page_url: null,
-        prev_page_url: null,
-        from: 1,
-        to: 1,
-        dataSource: [
-          {
-            key: '1',
-            id: '1',
-            title: '敬老爱老',
-            user_name: 'cxy',
-            start_at: '2015年3月21日',
-            status: '0',
-            people: '1',
-            people_num: 1,
-          }
-        ]
-      }
+      id:'',
+      aname:'',
+      writer:'',
+      start_time:'',
+      state:'',
+      people:'',
+      has_people:'',
+      has_people:''
+
     }
     this.getServer = this.getServer.bind(this)
   }
@@ -46,22 +33,24 @@ class ServiceList extends Component {
   }
 
   getServer () {
-    axios.get(`http://volunteer.andyhui.xin/vps/list/{status}`)
+    axios.get(`http://volunteer.andyhui.xin/vps/`)
       .then(res => {
         console.log("123")
         console.log(res.data)
-        const dataSource = [
-          {
-            key: 1,
-            id: res.data.vpList.data.id,
-            title: res.data.vpList.data.title,
-            user_name: res.data.vpList.data.user_name,
-            start_at: res.data.vpList.data.start_at,
-            status: res.data.vpList.data.status,
-            people: res.data.vpList.data.people_num,
-            people_num: res.data.vpList.data.has_people_num,
+        const dataSource = (res.data.vpList || [] ).map((item,index) =>{
+          return{
+            id:index,
+            key:item.id,
+            aname:item.title,
+            writer:item.user_name,
+            start_time:item.create_at,
+            state:item.status,
+            people:item.people_num,
+            has_people:item.has_people_num,
           }
-        ]
+
+        })
+
         this.setState({dataSource: dataSource})
         console.log(res.data.vpList)
       })
@@ -77,8 +66,8 @@ class ServiceList extends Component {
       },
       {
         title: '活动名称',
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'aname',
+        key: 'aname',
         render: text => <a href="#">{text}</a>,
       },
       {
@@ -88,8 +77,8 @@ class ServiceList extends Component {
       },
       {
         title: '发布时间',
-        dataIndex: 'time',
-        key: 'time',
+        dataIndex: 'start_time',
+        key: 'start_time',
       },
       {
         title: '活动状态',
@@ -114,8 +103,7 @@ class ServiceList extends Component {
       {/*<a href="#">{record.name}</a>*/}
             {/*<Divider type="vertical" />*/}
             <Link to="/activity/1" className="ant-dropdown-link">
-               {/*应获取一个id值，以此id数值作为url*/}
-              {/*怎么在路由表添加一个动态路由*/}
+
               详情 <Icon type="down" />
       </Link>
     </span>
