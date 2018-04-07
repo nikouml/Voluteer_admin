@@ -181,7 +181,7 @@ class ServiceUnpassList extends Component{
       let i=0
       axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
         .then(res => {
-          const Servers = (res.data.vpList.data || []).map((item, index) => {
+          let Servers = (res.data.vpList.data || []).map((item, index) => {
 
            let  str=new RegExp(keyWords)
 
@@ -198,8 +198,20 @@ class ServiceUnpassList extends Component{
             }else {}
 
           })
+
           if(i){
-            this.setState({Servers: Servers})
+            let Ans=[]
+            for(let i=0;i<Servers.length;i++){
+              if(typeof(Servers[i])==="undefined"){}
+              else {
+                Ans.push(Servers[i])
+              }
+            }
+            console.log("Ans: ",Ans)
+            Servers=Ans
+
+            this.setState({Servers:Servers})
+            // console.log(Servers)
           }else {
             this.setState({Servers:[{
                 key: 1,
