@@ -93,7 +93,7 @@ export default class ActivityUnpass extends Component {
             console.log(res)
             if(res.data.code===2000){
               message.success("通过成功")
-              this.props.history.push('/unpass')
+              this.props.history.push('/serviceunpasslist')
             }else{
               message.error("请重新登录")
             }
