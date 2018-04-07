@@ -17,7 +17,9 @@ export default class ActivityUnpass extends Component {
         has_people_num: '',
         content: '',
         user_name: ''
-      }
+      },
+      loading:false,
+      disabled:false
     }
     this.getServer = this.getServer.bind(this)
     this.handlSubmit = this.handlSubmit.bind(this)
@@ -86,7 +88,8 @@ export default class ActivityUnpass extends Component {
           if(res){
             console.log(res)
             if(res.data.code===2000){
-              message.success("通过成功")
+              message.success("审核成功")
+              this.setState({loadingL:true},{disabled:true})
               this.props.history.push('/unpass')
             }else{
               message.error("请重新登录")
@@ -127,8 +130,25 @@ export default class ActivityUnpass extends Component {
         {/*<br /> <br /> <br />*/}
         {/*</div>*/}
         <div style={{marginTop: 100}}>
-          <Button type="primary" size={'large'} style={{marginLeft: 300}} onClick={()=>{this.handlSubmit()}}>通过审核</Button>
-          <Button type="primary" size={'large'} style={{marginLeft: 100}}>拒绝审批</Button>
+          <Button type="primary"
+                  size={'large'}
+                  style={{marginLeft: 300}}
+                  onClick={()=>{this.handlSubmit()}}
+                  loading={this.state.loading}
+                  disabled={this.state.disabled}
+                  icon="check">
+            {this.state.disabled?'审核成功':'通过审核'}
+          </Button>
+          <Button type="primary"
+                  size={'large'}
+                  style={{marginLeft: 100}}
+                  icon="close"
+                  loading={this.state.loading}
+                  disabled={this.state.disabled}
+
+          >
+            拒绝审批
+          </Button>
         </div>
       </div>
     )

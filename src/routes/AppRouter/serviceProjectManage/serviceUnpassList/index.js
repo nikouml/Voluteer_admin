@@ -5,8 +5,6 @@ import Search from '../../component/searchWithDate/index'
 import {Table, Icon, Divider,Dropdown,Menu,DatePicker,message} from 'antd';
 import {Link} from 'dva/router'
 import axios from 'axios/index'
-
-
 import moment from 'moment'
 // import 'moment/locale/'
 moment.locale('zh-cn',{
@@ -22,9 +20,6 @@ import {Input} from "antd/lib/index";
 const dateFormat = 'YYYY-MM-DD';
 const APIDateFormate= "YYYY-MM-DD hh:mm:ss"
 const {RangePicker} = DatePicker;
-
-
-
 
 
 const searchContent=['待审核','已审核'];

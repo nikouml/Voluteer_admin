@@ -39,11 +39,11 @@ class ServiceList extends Component {
         console.log(res.data)
         const dataSource = (res.data.vpList || [] ).map((item,index) =>{
           return{
-            id:index,
-            key:item.id,
+            id:item.id,
+            key:index+1,
             aname:item.title,
             writer:item.user_name,
-            start_time:item.create_at,
+            start_time:item.created_at,
             state:item.status,
             people:item.people_num,
             has_people:item.has_people_num,
@@ -52,7 +52,7 @@ class ServiceList extends Component {
         })
 
         this.setState({dataSource: dataSource})
-        console.log(res.data.vpList)
+        console.log('1234',res.data.vpList)
       })
   }
 
@@ -61,13 +61,13 @@ class ServiceList extends Component {
     const columns = [
       {
         title: '序号',
-        dataIndex: 'num',
-        key: 'num'
+        dataIndex: 'key',
+        key: 'key'
       },
       {
         title: '活动名称',
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'aname',
+        key: 'aname',
         render: text => <a href="#">{text}</a>,
       },
       {
@@ -77,8 +77,8 @@ class ServiceList extends Component {
       },
       {
         title: '发布时间',
-        dataIndex: 'time',
-        key: 'time',
+        dataIndex: 'start_time',
+        key: 'start_time',
       },
       {
         title: '活动状态',
@@ -98,17 +98,19 @@ class ServiceList extends Component {
       {
         title: '操作',
         key: 'action',
-        render: (text, record) => (
-          <span>
+        render: (text, record) => {
+          // console.log('a', record)
+          // console.log('b',text)
+          return  (
+            <span>
       {/*<a href="#">{record.name}</a>*/}
-            {/*<Divider type="vertical" />*/}
-            <Link to="/activity/1" className="ant-dropdown-link">
-               {/*应获取一个id值，以此id数值作为url*/}
-              {/*怎么在路由表添加一个动态路由*/}
-              详情 <Icon type="down" />
+              <Divider type="vertical" />
+              <Link to={`/unpass/${record.id}`} className="ant-dropdown-link">
+        详情 <Icon type="down"/>
       </Link>
     </span>
-        ),
+          )
+        },
       }]
 
     return (
