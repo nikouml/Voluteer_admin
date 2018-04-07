@@ -53,6 +53,7 @@ class ServiceList extends Component {
     this.getServer = this.getServer.bind(this)
     this.onChangeDate=this.onChangeDate.bind(this)
     this.handleSearch=this.handleSearch.bind(this)
+    this.handlesearch=this.handlesearch.bind(this)
   }
 
   componentWillMount () {
@@ -64,12 +65,18 @@ class ServiceList extends Component {
     console.log('click', e);
   }
 
-  handleSearch(e){
+  handlesearch(e){
 
     let value=e.target.value
 
     // console.log(e.target.value)
     // this.setState({keyWords:value})
+    // this.getServer("keyWords",value)
+  }
+  handleSearch(e){
+    // console.log("e: ",e)
+    let value=e;
+    console.log("value: ",value)
     this.getServer("keyWords",value)
   }
 
@@ -160,6 +167,7 @@ class ServiceList extends Component {
 
     }else if(order==="keyWords"){
       let keyWords=string
+
       console.log("keywords: ",keyWords)
       let i=0
       axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
@@ -291,8 +299,9 @@ class ServiceList extends Component {
 
         <Search
           placeholder="input search text"
-          onBlur={(e)=>{this.handleSearch(e)}}
+          // onBlur={(e)=>{this.handleSearch(e)}}
           style={{width: 200,top:-1}}
+          onSearch={this.handleSearch}
           enterButton
         />
 

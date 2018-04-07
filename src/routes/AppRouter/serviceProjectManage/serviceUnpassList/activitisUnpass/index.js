@@ -49,7 +49,10 @@ export default class ActivityUnpass extends Component {
           user_name: res.data.vpInfo.user_name,
           join_end_at:res.data.vpInfo.join_end_at,
           people_num:res.data.vpInfo.people_num,
-          position_cdn:res.data.vpInfo.position_cdn
+          position_cdn:res.data.vpInfo.position_cdn,
+          main_picture:res.data.vpInfo.main_picture,
+          second_picture:res.data.vpInfo.second_picture,
+          third_picture:res.data.vpInfo.third_picture
 
         }
         this.setState({dataSource: dataSource})
@@ -77,6 +80,9 @@ export default class ActivityUnpass extends Component {
         "start_at": this.state.dataSource.start_at,
         "end_at": this.state.dataSource.end_at,
         "people_num": this.state.dataSource.people_num,
+        "main_picture":this.state.dataSource.main_picture,
+        "second_picture":this.state.dataSource.second_picture,
+        "third_picture":this.state.dataSource.third_picture,
         "status": "1",
         "type":"1"
       }
