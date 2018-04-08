@@ -69,7 +69,7 @@ class Log extends React.Component {
           dataSource={data}
           bordered
         />
-        <Pagination showQuickJumper defaultCurrent={1} total={200}  />
+        {/*<Pagination showQuickJumper defaultCurrent={1} total={200}  />*/}
       </div>
     )
   }

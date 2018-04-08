@@ -202,9 +202,13 @@ export default class HomePage extends PureComponent {
     map.addControl(new BMap.NavigationControl());
     map.setCurrentCity("仓山市"); // 设置地图显示的城市 此项是必须设置的
     const point = new BMap.Point(119.279814,26.053599); // 之后将从后端获取经纬度
+    const point2 =new BMap.Point(119.268684,26.053724);
     const marker = new BMap.Marker(point);        // 创建标注
+    const marker2 =new BMap.Marker(point2);
     map.addOverlay(marker);
+    map.addOverlay(marker2);
     map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+
     function SquareOverlay(center, length, color){
       this._center = center;
       this._length = length;
@@ -216,7 +220,7 @@ export default class HomePage extends PureComponent {
       // 保存map对象实例
       this._map = map;
       // 创建div元素，作为自定义覆盖物的容器
-      var div = document.createElement("div");
+      const div = document.createElement("div");
       div.style.position = "absolute";
       // 可以根据参数设置元素外观
       div.style.width = this._length + "px";
@@ -248,6 +252,11 @@ export default class HomePage extends PureComponent {
       }
     }
     const mySquare = new SquareOverlay(map.getCenter(), 10, "red");
+    map.addEventListener("click", function(e){
+      const markerpoint =new BMap.Marker(e.point.lng + ", " + e.point.lat);
+        map.addOverlay(markerpoint);
+      }
+    );
     map.addOverlay(mySquare);
   }
   render () {

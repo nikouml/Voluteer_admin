@@ -8,35 +8,35 @@ class Department extends React.Component {
     super(props);
     this.columns = [{
       title: '部门编号',
-      dataIndex: 'name',
+      dataIndex: 'bianhao',
       width: '13%'
     }, {
       title: '部门名称',
-      dataIndex: 'age',
+      dataIndex: 'name',
       width: '13%'
     }, {
       title: '上级部门',
-      dataIndex: 'age',
+      dataIndex: 'apartment',
       width: '13%'
     }, {
       title: '部门负责人',
-      dataIndex: 'age',
+      dataIndex: 'fuze',
       width: '13%'
     }, {
       title: '部门所属单位',
-      dataIndex: 'age',
+      dataIndex: 'belong',
       width: '13%'
     }, {
       title: '部门电话',
-      dataIndex: 'age',
+      dataIndex: 'phone',
       width: '13%'
     }, {
       title: '部门传真',
-      dataIndex: 'age',
+      dataIndex: 'chuanzhen',
       width: '13%'
     }, {
       title: '备注',
-      dataIndex: 'age',
+      dataIndex: 'beizhu',
       width: '13%'
     }, {
       title: '操作',
@@ -56,12 +56,26 @@ class Department extends React.Component {
     this.state = {
       dataSource: [{
         key: '0',
+        bianhao:'1',
         name: 'Edward King 0',
+        apartment:'部门',
+        belong:'所属单位',
+        fuze:'负责人',
+        phone:'123456',
+        chuanzhen:'1233213',
+        beizhu:'无',
         age: '32',
         address: 'London, Park Lane no. 0',
       }, {
         key: '1',
+        bianhao:'2',
         name: 'Edward King 1',
+        fuze:'负责人',
+        chuanzhen:'1232134',
+        beizhu:'无',
+        apartment:'部门',
+        phone:'1234565',
+        belong:'所属单位',
         age: '32',
         address: 'London, Park Lane no. 1',
       }],
@@ -100,7 +114,7 @@ class Department extends React.Component {
           style={{width: 200, marginLeft: 820}}
         />
         <Table bordered dataSource={dataSource} columns={columns} />
-        <Pagination showQuickJumper defaultCurrent={1} total={200}  />
+        {/*<Pagination showQuickJumper defaultCurrent={1} total={200}  />*/}
       </div>
     );
   }

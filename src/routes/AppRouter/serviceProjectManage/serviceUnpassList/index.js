@@ -110,7 +110,7 @@ class ServiceUnpassList extends Component{
               id: item.id,
               name: item.title,
               time: item.start_at,
-              state: item.status,
+              state: (item.apply_status?'审核通过':'待审核'),
             }
           })
           this.setState({Servers: Servers})

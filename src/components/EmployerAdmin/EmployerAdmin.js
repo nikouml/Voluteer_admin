@@ -6,6 +6,10 @@ for (let i = 0; i < 100; i++) {
   data.push({
     key: i.toString(),
     name: `Edrward ${i}`,
+    people:'负责人',
+    telephone:'1234567',
+    chuanzhen:'1234',
+    beizhu:'无',
     age: 32,
     address: `London Park no. ${i}`,
   });
@@ -29,22 +33,22 @@ class Employer extends React.Component {
       render: (text, record) => this.renderColumns(text, record, 'name'),
     }, {
       title: '单位负责人',
-      dataIndex: 'age',
+      dataIndex: 'people',
       width: '15%',
       render: (text, record) => this.renderColumns(text, record, 'age'),
     }, {
       title: '单位电话',
-      dataIndex: 'address',
+      dataIndex: 'telephone',
       width: '15%',
       render: (text, record) => this.renderColumns(text, record, 'address'),
     }, {
       title: '单位传真',
-      dataIndex: 'address',
+      dataIndex: 'chuanzhen',
       width: '15%',
       render: (text, record) => this.renderColumns(text, record, 'address'),
     },{
       title: '备注',
-      dataIndex: 'address',
+      dataIndex: 'beizhu',
       width: '15%',
       render: (text, record) => this.renderColumns(text, record, 'address'),
     }, {
@@ -113,7 +117,7 @@ class Employer extends React.Component {
       <div style={{fontSize: 30}}>系统管理--单位管理</div>
       <br />
       <Table bordered dataSource={this.state.data} columns={this.columns} />
-      <Pagination showQuickJumper defaultCurrent={1} total={200}  />
+      {/*<Pagination showQuickJumper defaultCurrent={1} total={200}  />*/}
       </div>
   )
   }

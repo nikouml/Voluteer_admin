@@ -6,10 +6,6 @@ import { Table, Icon, Divider } from 'antd'
 import { Link } from 'dva/router'
 import axios from 'axios'
 
-function itemRender (route, params, routes, paths) {
-  const last = routes.indexOf(route) === routes.length - 1
-  return last ? <span>{route.breadcrumbName}</span> : <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
-}
 
 class ServiceList extends Component {
   constructor (props) {
@@ -44,7 +40,7 @@ class ServiceList extends Component {
             aname:item.title,
             writer:item.user_name,
             start_time:item.created_at,
-            state:item.status,
+            state:(item.apply_status?'审核通过':'待审核'),
             people:item.people_num,
             has_people:item.has_people_num,
           }
