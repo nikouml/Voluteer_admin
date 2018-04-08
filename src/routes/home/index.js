@@ -6,9 +6,10 @@ import { namesMap } from 'routerForm'
 import ReactEcharts from 'echarts-for-react'
 // import { Map, Marker, NavigationControl, InfoWindow } from 'react-bmap'
 import {Map, NavigationControl, MapTypeControl,Marker, MarkerList} from 'react-bmap'
-import {simpleMapStyle} from './mapstyle'
+import BMap from 'BMap'
 import './index.css'
 
+const map = new BMap.Map("allmap"); // 创建Map实例
 const citylist = [
 
   {"text":"仓山市政府","location":"13278304.425295064,2986752.515262309","count":2},
@@ -194,7 +195,61 @@ export default class HomePage extends PureComponent {
   onChartReady = (echarts) => {
     console.log('echart is ready', echarts)
   }
-
+  componentDidMount(){
+    const map = new BMap.Map("allmap"); // 创建Map实例
+    map.centerAndZoom(new BMap.Point(119.279814,26.053599), 16); // 初始化地图,设置中心点坐标和地图级别
+    map.addControl(new BMap.MapTypeControl()); //添加地图类型控件
+    map.addControl(new BMap.NavigationControl());
+    map.setCurrentCity("仓山市"); // 设置地图显示的城市 此项是必须设置的
+    const point = new BMap.Point(119.279814,26.053599); // 之后将从后端获取经纬度
+    const marker = new BMap.Marker(point);        // 创建标注
+    map.addOverlay(marker);
+    map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+    function SquareOverlay(center, length, color){
+      this._center = center;
+      this._length = length;
+      this._color = color;
+    }
+// 继承API的BMap.Overlay
+    SquareOverlay.prototype = new BMap.Overlay();
+    SquareOverlay.prototype.initialize = function(map){
+      // 保存map对象实例
+      this._map = map;
+      // 创建div元素，作为自定义覆盖物的容器
+      var div = document.createElement("div");
+      div.style.position = "absolute";
+      // 可以根据参数设置元素外观
+      div.style.width = this._length + "px";
+      div.style.height = this._length + "px";
+      div.style.background = this._color;
+      // 将div添加到覆盖物容器中
+      map.getPanes().markerPane.appendChild(div);
+      // 保存div实例
+      this._div = div;
+      // 需要将div元素作为方法的返回值，当调用该覆盖物的show、
+      // hide方法，或者对覆盖物进行移除时，API都将操作此元素。
+      return div;
+    }
+    SquareOverlay.prototype.draw = function(){
+// 根据地理坐标转换为像素坐标，并设置给容器
+      var position = this._map.pointToOverlayPixel(this._center);
+      this._div.style.left = position.x - this._length / 2 + "px";
+      this._div.style.top = position.y - this._length / 2 + "px";
+    }
+    SquareOverlay.prototype.show = function(){
+      if (this._div){
+        this._div.style.display = "";
+      }
+    }
+// 实现隐藏方法
+    SquareOverlay.prototype.hide = function(){
+      if (this._div){
+        this._div.style.display = "none";
+      }
+    }
+    const mySquare = new SquareOverlay(map.getCenter(), 10, "red");
+    map.addOverlay(mySquare);
+  }
   render () {
 
     return (
@@ -222,80 +277,13 @@ export default class HomePage extends PureComponent {
         <div className="first-title">
           <Icon type="caret-right" style={{fontSize: 16, color: '#a4b7cc'}} /> 服务网点概况
         </div>
-        <div className="map-show"  >
-          {/*<Map center = {{*/}
-            {/*lng: 119.279282,*/}
-            {/*lat: 26.052323*/}
-          {/*}}*/}
-               {/*zoom = '16'*/}
-               {/*// mapStyle={simpleMapStyle}*/}
-          {/*>*/}
-            {/*<Marker*/}
-              {/*position={{lng: 119.279282, lat: 26.052323}}*/}
-              {/*icon="simple_red"*/}
-              {/*events={{*/}
-                {/*click: () => {*/}
-                  {/*console.log('marker click event');*/}
-                {/*}*/}
-              {/*}}*/}
-            {/*/>*/}
-            {/*<Marker position={{lng: 119.282875, lat: 26.052712}} icon="simple_blue" />*/}
-            {/*<Marker position={{lng: 119.276336, lat: 26.049336}} icon="loc_blue" />*/}
-            {/*<Marker position={{lng: 119.272455, lat: 26.057029}} icon="loc_red" />*/}
-            {/*<Marker position={{lng: 119.286109, lat: 26.056153}} icon="start" />*/}
-            {/*<Marker position={{lng: 119.277629, lat: 26.059398}} icon="end" />*/}
-          {/*</Map>*/}
-          {/*<Map center={{*/}
-            {/*lng: 119.279282,*/}
-            {/*lat: 26.052323*/}
-          {/*}}*/}
-               {/*zoom='16'*/}
-               {/*mapStyle={simpleMapStyle}>*/}
-            {/*<MarkerList*/}
-              {/*data={citylist}*/}
-              {/*fillStyle="#ff3333"*/}
-              {/*coordType="bd09mc"*/}
-              {/*animation={true}*/}
-              {/*isShowShadow={false}*/}
-              {/*multiple={true}*/}
-              {/*autoViewport={false}*/}
-            {/*/>*/}
+        <div id="allmap"
+             style={{
+               width:'100vw',
+               height:'75vh'
+             }} >
 
-          {/*</Map>*/}
-          <Map center={{
-            lng: 119.279282,
-            lat: 26.052323
-          }}
-               zoom='16'
-               mapStyle={simpleMapStyle}>
-            <MarkerList
-              data={citylist}
-              fillStyle="#ff3333"
-              coordType="bd09mc"
-              animation={true}
-              isShowShadow={false}
-              multiple={true}
-              autoViewport={false}
-            />
-          </Map>
-          {/*<Map center={{*/}
-            {/*lng: 119.279282,*/}
-            {/*lat: 26.052323*/}
-          {/*}}*/}
-               {/*zoom='16'*/}
-               {/*// mapStyle={simpleMapStyle}*/}
-            {/*>*/}
-            {/*<div style={{position: 'absolute', left: '10px', top: '10px',  color: 'white', background: 'blue'}}>自定义组件</div>*/}
-            {/*<CustomControl />*/}
-            {/*{markers.map((marker, index) => {*/}
-              {/*var icon = "red" + (index + 1);*/}
-              {/*return <Marker map={this.props.map} icon={icon} position={{lng: marker.lng, lat: marker.lat}} {...marker} key={index}/>*/}
-            {/*})}*/}
-            {/*<NavigationControl />*/}
-            {/*/!*<MapTypeControl />*!/*/}
-            {/*/!*<ScaleControl />*!/*/}
-            {/*/!*<OverviewMapControl />*!/*/}
-          {/*</Map>*/}
+
 
         </div>
         <div className="depart-server">

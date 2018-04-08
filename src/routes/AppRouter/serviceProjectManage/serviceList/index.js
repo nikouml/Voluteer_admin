@@ -37,7 +37,7 @@ class ServiceList extends Component {
       .then(res => {
         console.log("123")
         console.log(res.data)
-        const dataSource = (res.data.vpList || [] ).map((item,index) =>{
+        const dataSource = (res.data.vpList.data || [] ).map((item,index) =>{
           return{
             id:item.id,
             key:index+1,
@@ -50,9 +50,8 @@ class ServiceList extends Component {
           }
 
         })
-
         this.setState({dataSource: dataSource})
-        console.log('1234',res.data.vpList)
+
       })
   }
 

@@ -16,6 +16,7 @@ dirNames.forEach(item => {
 })
 
 export default {
+  'externals':{ 'BMap':'BMap'},
   'entry': 'src/index.js',
   'disableCSSModules': true,
   'html': { 'template': './src/index.ejs' },

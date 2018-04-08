@@ -115,7 +115,6 @@ class ServiceUnpassList extends Component{
           })
           this.setState({Servers: Servers})
           // console.log(res.data.vpList.data[0])
-          console.log(localStorage.token)
           // console.log(this.state.Servers)
         })
     }else if(order==="date"){
@@ -168,7 +167,7 @@ class ServiceUnpassList extends Component{
           // console.log(this.state.Servers)
         })
 
-    }else if(order==="status"){
+    }else if(order==="statufs"){
 
     }else if(order==="keyWords"){
       let keyWords=string
