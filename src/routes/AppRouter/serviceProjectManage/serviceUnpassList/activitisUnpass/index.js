@@ -32,7 +32,7 @@ export default class ActivityUnpass extends Component {
   getServer() {
     axios.get(`http://volunteer.andyhui.xin/vps/${this.props.match.params.id}`)
       .then(res => {
-        console.log('123')
+        // console.log('123')
         if(res){
           console.log(res.data.vpInfo)
         }
@@ -52,7 +52,9 @@ export default class ActivityUnpass extends Component {
           position_cdn:res.data.vpInfo.position_cdn,
           main_picture:res.data.vpInfo.main_picture,
           second_picture:res.data.vpInfo.second_picture,
-          third_picture:res.data.vpInfo.third_picture
+          third_picture:res.data.vpInfo.third_picture,
+          status:res.data.vpInfo.status,
+          type:res.data.vpInfo.type
 
         }
         this.setState({dataSource: dataSource})
@@ -60,11 +62,17 @@ export default class ActivityUnpass extends Component {
       })
   }
 
-  handlSubmit() {
+  handlSubmit(string) {
     const ID=this.props.match.params.id
     const URL='http://volunteer.andyhui.xin/vps/'+ID
     // const URL='http://volunteer.andyhui.xin/vps'+ID
     const token=localStorage.token
+    let applyRes=0
+    if(string==="pass"){
+      applyRes=1
+    }else{
+      applyRes=0
+    }
     const config={
       method:'post',
       url:URL,
@@ -82,10 +90,15 @@ export default class ActivityUnpass extends Component {
         "main_picture":this.state.dataSource.main_picture,
         "second_picture":this.state.dataSource.second_picture,
         "third_picture":this.state.dataSource.third_picture,
-        "status": "1",
-        "type":"1"
+        "status": this.state.dataSource.status,
+        "type":this.state.dataSource.type,
+        "apply_status":1,
+        "apply_res":applyRes
       }
     }
+    console.log(applyRes)
+    console.log("data: ",config.data)
+
     if(token){
       axios(config)
         .then((res) => {
@@ -133,8 +146,8 @@ export default class ActivityUnpass extends Component {
         {/*<br /> <br /> <br />*/}
         {/*</div>*/}
         <div style={{marginTop: 100}}>
-          <Button type="primary" size={'large'} style={{marginLeft: 300}} onClick={()=>{this.handlSubmit()}}>通过审核</Button>
-          <Button type="primary" size={'large'} style={{marginLeft: 100}}>拒绝审批</Button>
+          <Button type="primary" size={'large'} style={{marginLeft: 300}} onClick={()=>{this.handlSubmit("pass")}}>通过审核</Button>
+          <Button type="primary" size={'large'} style={{marginLeft: 100}} onClick={()=>{this.handlSubmit("reject")}}>拒绝审批</Button>
         </div>
       </div>
     )

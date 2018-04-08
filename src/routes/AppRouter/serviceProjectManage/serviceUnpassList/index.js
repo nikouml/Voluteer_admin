@@ -1,7 +1,7 @@
 import React,{Component} from 'react'
 import {Button} from 'antd'
 import Choose from '../../component/choose/index'
-import Search from '../../component/searchWithDate/index'
+import SearchDate from '../../component/searchWithDate/index'
 import {Table, Icon, Divider,Dropdown,Menu,DatePicker,message} from 'antd';
 import {Link} from 'dva/router'
 import axios from 'axios/index'
@@ -60,7 +60,10 @@ class ServiceUnpassList extends Component{
         }
         ],
         dateRange:[],
-        keyWords:""
+        keyWords:"",
+        childData:[],
+        selectedRowKeys: [], // Check here to configure the default column
+        loading: false,
 
       }
 
@@ -68,6 +71,135 @@ class ServiceUnpassList extends Component{
       this.onChangeDate=this.onChangeDate.bind(this)
       this.handleSearch=this.handleSearch.bind(this)
     }
+
+  start = (string) => {
+    this.setState({ loading: true });
+
+    let keys=[]
+    if(string==='pass'){
+      // console.log(this.state.selectedRowKeys)
+      let selectedRowKeys=this.state.selectedRowKeys
+      for(let i=0;i<selectedRowKeys.length;i++){
+        let num=selectedRowKeys[i]
+        let server=this.state.Servers[num]
+        let id=server.id
+        keys.push(id)
+      }
+    }else if(string==='reject'){
+      let selectedRowKeys=this.state.selectedRowKeys
+      for(let i=0;i<selectedRowKeys.length;i++) {
+        let num = selectedRowKeys[i]
+        let server = this.state.Servers[num]
+        let id = server.id
+        keys.push(id)
+      }
+    }
+
+    console.log(keys)
+    // ajax request after empty completing
+
+    for(let i=0;i<keys.length;i++){
+
+      const ID=keys[i]
+      const URL='http://volunteer.andyhui.xin/vps/'+ID
+      // const URL='http://volunteer.andyhui.xin/vps'+ID
+      const token=localStorage.token
+      let applyRes=0
+      if(string==="pass"){
+        applyRes=1
+      }else{
+        applyRes=0
+      }
+
+      let title,content,position_name,position_cdn,join_start_at,join_end_at,start_at,end_at,people_num,main_picture,second_picture,
+        third_picture,status,type
+
+      axios.get(URL)
+        .then(res=>{
+          if(res.data.code===2000){
+            // console.log("res: ",res)
+            let vpInfo=res.data.vpInfo
+            this.setState({
+              title: vpInfo.title,
+              content: vpInfo.content,
+              position_name: vpInfo.position_name,
+              position_cdn: vpInfo.position_cdn,
+              join_start_at: vpInfo.join_start_at,
+              join_end_at: vpInfo.join_end_at,
+              start_at: vpInfo.start_at,
+              end_at: vpInfo.end_at,
+              people_num: vpInfo.people_num,
+              main_picture:vpInfo.main_picture,
+              second_picture:vpInfo.second_picture,
+              third_picture:vpInfo.third_picture,
+              status: vpInfo.status,
+              type:vpInfo.type,
+            })
+
+          }
+        })
+      let apply_status=1
+      let apply_res=applyRes
+
+      const config={
+        method:'post',
+        url:URL,
+        headers:{"Content-Type":"application/json","token":token},
+        data: {
+          "title": this.state.title,
+          "content": this.state.content,
+          "position_name": this.state.position_name,
+          "position_cdn": this.state.position_cdn,
+          "join_start_at": this.state.join_start_at,
+          "join_end_at": this.state.join_end_at,
+          "start_at": this.state.start_at,
+          "end_at": this.state.end_at,
+          "people_num": this.state.people_num,
+          "main_picture": this.state.main_picture,
+          "second_picture": this.state.second_picture,
+          "third_picture": this.state.third_picture,
+          "status": this.state.status,
+          "type": this.state.type,
+          "apply_status":apply_status,
+          "apply_res":apply_res
+        }
+      }
+
+      // co
+      console.log("Url: ",URL,"data: ",config.data)
+
+      if(token){
+        axios(config)
+          .then((res) => {
+            if(res){
+              console.log("postRes: ",res)
+              if(res.data.code===2000){
+                message.success("通过成功")
+                // this.props.history.push('/serviceunpasslist')
+              }else{
+                message.error("请重新登录")
+              }
+            }
+          })
+          .catch(function (err) {
+            console.log(err)
+          })
+      }
+
+    }
+
+    setTimeout(() => {
+      this.setState({
+        selectedRowKeys: [],
+        loading: false,
+      });
+    }, 1000);
+  }
+  onSelectChange = (selectedRowKeys) => {
+    console.log('selectedRowKeys changed: ', selectedRowKeys);
+    this.setState({ selectedRowKeys });
+  }
+
 
   handleMenuClick(e) {
     message.info('暂时无法搜索.');
@@ -107,73 +239,91 @@ class ServiceUnpassList extends Component{
   getServer(order,string)
   {
     if(!order){
+
       axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
         .then(res => {
+          console.log("res:",res)
           const Servers = (res.data.vpList.data || []).map((item, index) => {
             return {
               key: index,
               id: item.id,
               name: item.title,
               time: item.start_at,
-              state: item.status,
+              apply_status:searchContent[item.apply_status]
             }
           })
+          console.log(Servers)
           this.setState({Servers: Servers})
           // console.log(res.data.vpList.data[0])
           console.log(localStorage.token)
           // console.log(this.state.Servers)
         })
-    }else if(order==="date"){
-
-      axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
-        .then(res => {
-          let i=0;
-          const Servers = (res.data.vpList.data || []).map((item, index) => {
-
-
-            let joinData=item.start_at
-            joinData=joinData.substr(0,10)
-
-
-            let Start=this.state.dateRange[0]
-            Start=Start.calendar(null,{sameElse:"YYYY-MM-DD"})
-
-            let End=this.state.dateRange[1]
-            End=End.calendar(null,{sameElse:"YYYY-MM-DD"})
-
-            // console.log(joinData,"1")
-            // console.log(Start,"2")
-            // console.log(End,"3")
-
-
-            if(moment(joinData).isBetween(Start,End)){
-              i=1
-              return {
-                key: index,
-                id: item.id,
-                name: item.title,
-                time: item.start_at,
-                state: item.status,
-              }
-            }else{}
-          })
-          if(i){
-            this.setState({Servers: Servers})
-          }else {
-            this.setState({Servers:[{
-                key: 1,
-                id:1,
-                name: '没有找到',
-                time: '没有找到',
-                state: '没有找到',
-              }]})
-          }
-          // console.log(res.data.vpList.data[0])
-          console.log(localStorage.token)
-          // console.log(this.state.Servers)
-        })
-
-    }else if(order==="status"){
+    }
+    // else if(order==="date"){
+    //
+    //   axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
+    //     .then(res => {
+    //       let i=0;
+    //       const Servers = (res.data.vpList.data || []).map((item, index) => {
+    //
+    //
+    //         let joinData=item.start_at
+    //         joinData=joinData.substr(0,10)
+    //
+    //
+    //         let Start=this.state.dateRange[0]
+    //         Start=Start.calendar(null,{
+    //           sameElse:"YYYY-MM-DD",
+    //           sameDay: 'YYYY-MM-DD',
+    //           nextDay: 'YYYY-MM-DD',
+    //           nextWeek: 'YYYY-MM-DD',
+    //           lastDay: 'YYYY-MM-DD',
+    //           lastWeek: 'YYYY-MM-DD'})
+    //
+    //         let End=this.state.dateRange[1]
+    //         End=End.calendar(null,{
+    //           sameElse:"YYYY-MM-DD",
+    //           sameDay: 'YYYY-MM-DD',
+    //           nextDay: 'YYYY-MM-DD',
+    //           nextWeek: 'YYYY-MM-DD',
+    //           lastDay: 'YYYY-MM-DD',
+    //           lastWeek: 'YYYY-MM-DD'})
+    //
+    //
+    //         // console.log(joinData,"1")
+    //         // console.log(Start,"2")
+    //         // console.log(End,"3")
+    //
+    //
+    //         if(moment(joinData).isBetween(Start,End)){
+    //           i=1
+    //           return {
+    //             key: index,
+    //             id: item.id,
+    //             name: item.title,
+    //             time: item.start_at,
+    //             state: item.status,
+    //           }
+    //         }else{}
+    //       })
+    //       if(i){
+    //         this.setState({Servers: Servers})
+    //       }else {
+    //         this.setState({Servers:[{
+    //             key: 1,
+    //             id:1,
+    //             name: '没有找到',
+    //             time: '没有找到',
+    //             state: '没有找到',
+    //           }]})
+    //       }
+    //       // console.log(res.data.vpList.data[0])
+    //       console.log(localStorage.token)
+    //       // console.log(this.state.Servers)
+    //     })
+    //
+    // }
+    else if(order==="status"){
 
     }else if(order==="keyWords"){
       let keyWords=string
@@ -229,6 +379,15 @@ class ServiceUnpassList extends Component{
     }
 
   }
+  handleSearchDate(e){
+      // this.setState({
+      //   childData:e
+      // })
+    console.log('child:',e)
+    this.setState({
+      Servers:e
+    })
+}
     render(){
       const columns = [
         {
@@ -245,10 +404,6 @@ class ServiceUnpassList extends Component{
           title: '发布时间',
           dataIndex: 'time',
           key: 'time',
-        }, {
-          title: '审核状态',
-          dataIndex: 'state',
-          key: 'state',
         },
         {
           title: '操作',
@@ -285,18 +440,25 @@ class ServiceUnpassList extends Component{
 
       let styleButton = {marginLeft: 8, position: 'relative', top: 2 + 'px'}
 
+      const { loading, selectedRowKeys } = this.state;
+      const rowSelection = {
+        selectedRowKeys,
+        onChange: this.onSelectChange,
+      };
+      const hasSelected = selectedRowKeys.length > 0;
+
       return(
         <div>
           <Choose/>
           <div >
           {/*<Search searchContent={searchContent}/>*/}
 
-            <RangePicker
-              defaultValue={[moment('2018-03-01', dateFormat), moment('2018-03-02', dateFormat)]}
-              format={dateFormat}
-              onChange={this.onChangeDate}
-            />
-
+            {/*<RangePicker*/}
+              {/*defaultValue={[moment('2018-03-01', dateFormat), moment('2018-03-02', dateFormat)]}*/}
+              {/*format={dateFormat}*/}
+              {/*onChange={this.onChangeDate}*/}
+            {/*/>*/}
+            <SearchDate handleSearchDate={this.handleSearchDate.bind(this)} Url="http://volunteer.andyhui.xin/vps/list/0"/>
             <Dropdown overlay={menu1}>
               <Button style={styleButton}>
                 活动状态 <Icon type="down"/>
@@ -315,17 +477,34 @@ class ServiceUnpassList extends Component{
             <br/><br/><br/><br/><br/>
 
           </div>
-          <div >
-            <Dropdown overlay={menu}>
-              <Button style={{ marginLeft: 8 }}>
-                批量操作 <Icon type="down" />
-              </Button>
-            </Dropdown>
-          </div>
 
-          <div className="show">
-            <Table columns={columns} dataSource={this.state.Servers}/>
+          <div style={{ marginBottom: 16 }}>
+            <Button
+              type="primary"
+              onClick={()=>{this.start("pass")}}
+              disabled={!hasSelected}
+              loading={loading}
+            >
+              审核通过
+            </Button>
+            <Button
+              type="primary"
+              onClick={()=>{this.start("reject")}}
+              disabled={!hasSelected}
+              loading={loading}
+            >
+              审核拒绝
+            </Button>
+
+
+
+            <span style={{ marginLeft: 8 }}>
+            {hasSelected ? `选择了 ${selectedRowKeys.length} 个` : ''}
+          </span>
           </div>
+          <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} />
+
+
         </div>
       )
     }

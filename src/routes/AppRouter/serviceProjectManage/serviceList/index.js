@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 // import {BrowserRouter as Router,Link} from 'react-router-dom'
 import Choose from '../../component/choose/index'
-import Search from '../../component/searchWithDate/index'
+import SearchDate from '../../component/searchWithDate/index'
 import {Input, Menu, Dropdown, Button, Icon, message, Divider, DatePicker,Table} from 'antd'
 import { Link } from 'dva/router'
 import axios from 'axios'
@@ -16,6 +16,8 @@ const APIDateFormate= "YYYY-MM-DD hh:mm:ss"
 
 const {RangePicker} = DatePicker;
 
+
+const stateName=['发布成功','报名中','报名结束活动未开始','活动进行中','活动结束']
 
 function itemRender (route, params, routes, paths) {
   const last = routes.indexOf(route) === routes.length - 1
@@ -42,9 +44,9 @@ class ServiceList extends Component {
             title: '敬老爱老',
             user_name: 'cxy',
             start_at: '2015年3月21日',
-            status: '0',
-            people: '1',
-            people_num: 1,
+            status: '发布成功',
+            people_num: 3,
+            has_people_num:1
           }
         ],
         dataRange:[]
@@ -79,6 +81,15 @@ class ServiceList extends Component {
     console.log("value: ",value)
     this.getServer("keyWords",value)
   }
+  handleSearchDate(e){
+    // this.setState({
+    //   childData:e
+    // })
+    console.log('child:',e)
+    this.setState({
+      Servers:e
+    })
+  }
 
   onChangeDate(e){
 
@@ -97,122 +108,165 @@ class ServiceList extends Component {
   getServer(order,string)
   {
     if(!order){
-      axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
+      axios.defaults.headers.common['token'] = localStorage.getItem('token') || ''
+      axios.get(`http://volunteer.andyhui.xin/vps`)
         .then(res => {
-          const Servers = (res.data.vpList.data || []).map((item, index) => {
-            return {
-              key: index,
-              id: item.id,
-              name: item.title,
-              time: item.start_at,
-              state: item.status,
-            }
-          })
-          this.setState({Servers: Servers})
-          console.log(Servers)
-          console.log(localStorage.token)
-          // console.log(this.state.Servers)
-        })
-    }else if(order==="date"){
-
-      axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
-        .then(res => {
-          let i=0;
-          const Servers = (res.data.vpList.data || []).map((item, index) => {
-
-
-            let joinData=item.start_at
-            joinData=joinData.substr(0,10)
-
-
-            let Start=this.state.dateRange[0]
-            Start=Start.calendar(null,{sameElse:"YYYY-MM-DD"})
-
-            let End=this.state.dateRange[1]
-            End=End.calendar(null,{sameElse:"YYYY-MM-DD"})
-
-            // console.log(joinData,"1")
-            // console.log(Start,"2")
-            // console.log(End,"3")
-
-
-            if(moment(joinData).isBetween(Start,End)){
-              i=1
+          if(res.data.code===2000){
+            console.log(res)
+            const Servers = (res.data.vpList.data || []).map((item, index) => {
+              let State
+              if(item.apply_status===0){
+                if(item.apply_res===0){
+                  State='未审核'
+                }else if(item.apply_res===1){
+                  State='已拒绝'
+                }
+              }else{
+                State=stateName[item.apply_status]
+              }
               return {
                 key: index,
                 id: item.id,
                 name: item.title,
                 time: item.start_at,
-                state: item.status,
+                state: State,
+                people_num:item.people_num,
+                has_people_num:item.has_people_num,
+                writer:item.user_name
               }
-            }else{}
-          })
-          if(i){
+            })
             this.setState({Servers: Servers})
-          }else {
-            this.setState({Servers:[{
-                key: 1,
-                id:1,
-                name: '没有找到',
-                time: '没有找到',
-                state: '没有找到',
-              }]})
+            console.log(Servers)
+            console.log(localStorage.token)
+            // console.log(this.state.Servers)
           }
-          // console.log(res.data.vpList.data[0])
-          console.log(localStorage.token)
-          // console.log(this.state.Servers)
+          else{
+            // console.log(res)
+            message.error("请重新登录")
+          }
         })
-
-    }else if(order==="status"){
+    }
+    // else if(order==="date"){
+    //
+    //   axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
+    //     .then(res => {
+    //       let i=0;
+    //       const Servers = (res.data.vpList.data || []).map((item, index) => {
+    //
+    //
+    //         let joinData=item.start_at
+    //         joinData=joinData.substr(0,10)
+    //
+    //
+    //         let Start=this.state.dateRange[0]
+    //         Start=Start.calendar(null,{
+    //           sameElse:"YYYY-MM-DD",
+    //           sameDay: 'YYYY-MM-DD',
+    //           nextDay: 'YYYY-MM-DD',
+    //           nextWeek: 'YYYY-MM-DD',
+    //           lastDay: 'YYYY-MM-DD',
+    //           lastWeek: 'YYYY-MM-DD'})
+    //
+    //         let End=this.state.dateRange[1]
+    //         End=End.calendar(null,{
+    //           sameElse:"YYYY-MM-DD",
+    //           sameDay: 'YYYY-MM-DD',
+    //           nextDay: 'YYYY-MM-DD',
+    //           nextWeek: 'YYYY-MM-DD',
+    //           lastDay: 'YYYY-MM-DD',
+    //           lastWeek: 'YYYY-MM-DD'})
+    //
+    //
+    //         // console.log(joinData,"1")
+    //         // console.log(Start,"2")
+    //         // console.log(End,"3")
+    //
+    //
+    //         if(moment(joinData).isBetween(Start,End)){
+    //           i=1
+    //           return {
+    //             key: index,
+    //             id: item.id,
+    //             name: item.title,
+    //             time: item.start_at,
+    //             state: item.status,
+    //           }
+    //         }else{}
+    //       })
+    //       if(i){
+    //         this.setState({Servers: Servers})
+    //       }else {
+    //         this.setState({Servers:[{
+    //             key: 1,
+    //             id:1,
+    //             name: '没有找到',
+    //             time: '没有找到',
+    //             state: '没有找到',
+    //           }]})
+    //       }
+    //       // console.log(res.data.vpList.data[0])
+    //       console.log(localStorage.token)
+    //       // console.log(this.state.Servers)
+    //     })
+    //
+    // }
+    else if(order==="status"){
 
     }else if(order==="keyWords"){
       let keyWords=string
 
       console.log("keywords: ",keyWords)
       let i=0
-      axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
+
+      axios.defaults.headers.common['token'] = localStorage.getItem('token') || ''
+      axios.get(`http://volunteer.andyhui.xin/vps`)
         .then(res => {
-          let Servers = (res.data.vpList.data || []).map((item, index) => {
 
-            let  str=new RegExp(keyWords)
+          if(res.data.code===2000){
+            let Servers = (res.data.vpList.data || []).map((item, index) => {
 
-            console.log(item.title,"and",str)
-            if(str.test(item.title)){
-              i=1
-              return {
-                key: index,
-                id: item.id,
-                name: item.title,
-                time: item.start_at,
-                state: item.status,
+              let  str=new RegExp(keyWords)
+
+              console.log(item.title,"and",str)
+              if(str.test(item.title)){
+                i=1
+                return {
+                  key: index,
+                  id: item.id,
+                  name: item.title,
+                  time: item.start_at,
+                  state: item.status,
+                }
+              }else {}
+            })
+            if(i){
+              let Ans=[]
+              for(let i=0;i<Servers.length;i++){
+                if(typeof(Servers[i])==="undefined"){}
+                else {
+                  Ans.push(Servers[i])
+                }
               }
-            }else {}
+              console.log("Ans: ",Ans)
+              Servers=Ans
 
-          })
-          if(i){
-            let Ans=[]
-            for(let i=0;i<Servers.length;i++){
-              if(typeof(Servers[i])==="undefined"){}
-              else {
-                Ans.push(Servers[i])
-              }
+              this.setState({Servers: Servers})
+            }else {
+              this.setState({Servers:[{
+                  key: 1,
+                  id:1,
+                  name: '没有找到',
+                  time: '没有找到',
+                  state: '没有找到',
+                }]})
             }
-            console.log("Ans: ",Ans)
-            Servers=Ans
-
-            this.setState({Servers: Servers})
-          }else {
-            this.setState({Servers:[{
-                key: 1,
-                id:1,
-                name: '没有找到',
-                time: '没有找到',
-                state: '没有找到',
-              }]})
+            // console.log(res.data.vpList.data[0])
+            console.log(localStorage.token)
+            // console.log(this.state.Servers)
           }
-          // console.log(res.data.vpList.data[0])
-          console.log(localStorage.token)
-          // console.log(this.state.Servers)
+          else{
+            message.error("请重新登录")
+          }
         })
 
     }
@@ -239,8 +293,8 @@ class ServiceList extends Component {
     const columns = [
       {
         title: '序号',
-        dataIndex: 'num',
-        key: 'num'
+        dataIndex: 'id',
+        key: 'id'
       },
       {
         title: '活动名称',
@@ -265,13 +319,13 @@ class ServiceList extends Component {
       },
       {
         title: '人数',
-        dataIndex: 'people',
-        key: 'people'
+        dataIndex: 'people_num',
+        key: 'people_num'
       },
       {
         title:'已参加人数',
-        dataIndex:'has_people',
-        key:'people_num'
+        dataIndex:'has_people_num',
+        key:'has_people_num'
       },
       {
         title: '操作',
@@ -294,11 +348,12 @@ class ServiceList extends Component {
         {/*<Breadcrumb itemRender={itemRender} routes={routes}/>;*/}
         <Choose />
 
-        <RangePicker
-          defaultValue={[moment('2018-01-01', dateFormat), moment('2017-02-01', dateFormat)]}
-          format={dateFormat}
-          onChange={this.onChangeDate}
-        />
+        {/*<RangePicker*/}
+          {/*defaultValue={[moment('2018-01-01', dateFormat), moment('2017-02-01', dateFormat)]}*/}
+          {/*format={dateFormat}*/}
+          {/*onChange={this.onChangeDate}*/}
+        {/*/>*/}
+        <SearchDate handleSearchDate={this.handleSearchDate.bind(this)}  Url="http://volunteer.andyhui.xin/vps"/>
 
         <Dropdown overlay={menu}>
           <Button style={styleButton}>
@@ -307,13 +362,14 @@ class ServiceList extends Component {
 
         </Dropdown>
 
-        <Search
-          placeholder="input search text"
-          // onBlur={(e)=>{this.handleSearch(e)}}
-          style={{width: 200,top:-1}}
-          onSearch={this.handleSearch}
-          enterButton
-        />
+        {/*<Search*/}
+          {/*placeholder="input search text"*/}
+          {/*// onBlur={(e)=>{this.handleSearch(e)}}*/}
+          {/*style={{width: 200,top:-1}}*/}
+          {/*onSearch={this.handleSearch}*/}
+          {/*enterButton*/}
+        {/*/>*/}
+
 
         <div className="show">
           <Table columns={columns} dataSource={this.state.Servers} />
