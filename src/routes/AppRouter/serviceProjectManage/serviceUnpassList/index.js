@@ -1,331 +1,367 @@
-import React,{Component} from 'react'
-import {Button} from 'antd'
+import React, {Component} from 'react'
 import Choose from '../../component/choose/index'
-import Search from '../../component/searchWithDate/index'
-import {Table, Icon, Divider,Dropdown,Menu,DatePicker,message} from 'antd';
+import SearchDate from '../../component/searchWithDate/index'
+import {Table, Icon, Dropdown, Menu, Button, message, Input} from 'antd';
 import {Link} from 'dva/router'
 import axios from 'axios/index'
-import moment from 'moment'
-// import 'moment/locale/'
-moment.locale('zh-cn',{
-  months : '一月_二月_三月_四月_五月_六月_七月_八月_九月_十月_十一月_十二月'.split('_'),
-  monthsShort : '1月_2月_3月_4月_5月_6月_7月_8月_9月_10月_11月_12月'.split('_'),
-  weekdays : '星期日_星期一_星期二_星期三_星期四_星期五_星期六'.split('_'),
-  weekdaysShort : '周日_周一_周二_周三_周四_周五_周六'.split('_'),
-  weekdaysMin : '日_一_二_三_四_五_六'.split('_'),
-
-})
-
-import {Input} from "antd/lib/index";
-const dateFormat = 'YYYY-MM-DD';
-const APIDateFormate= "YYYY-MM-DD hh:mm:ss"
-const {RangePicker} = DatePicker;
 
 
-const searchContent=['待审核','已审核'];
-const menu = (
-  <Menu >
-    <Menu.Item key="1">审核通过</Menu.Item>
-    <Menu.Item key="2">审核拒绝</Menu.Item>
-  </Menu>
-)
+const searchContent = ['未审核', '已拒绝'];
 
-class ServiceUnpassList extends Component{
-    constructor(props){
-        super(props)
-      this.state={
-        Servers:[{
-          key: '1',
-          id:'1',
-          name: '敬老爱老',
-          time: '2015年3月21日',
-          state: '待审核',
-        },{
-          key: '2',
-          id:'2',
-          name: '敬老爱老',
-          time: '2015年3月21日',
-          state: '待审核',
-        },{
-          key: '3',
-          id:'3',
-          name: '敬老爱老',
-          time: '2015年3月21日',
-          state: '待审核',
-        }
-        ],
-        dateRange:[],
-        keyWords:""
+class ServiceUnpassList extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      Servers: [{
+        key: '1',
+        id: '1',
+        name: '敬老爱老',
+        time: '2015年3月21日',
+        state: '待审核',
+      }, {
+        key: '2',
+        id: '2',
+        name: '敬老爱老',
+        time: '2015年3月21日',
+        state: '待审核',
+      }, {
+        key: '3',
+        id: '3',
+        name: '敬老爱老',
+        time: '2015年3月21日',
+        state: '待审核',
+      }
+      ],
+      keyWords: "",
+      selectedRowKeys: [], // Check here to configure the default column
+      loading: false,
+    }
 
+    this.getServer = this.getServer.bind(this)
+    this.handleSearch = this.handleSearch.bind(this)
+  }
+
+  start = (string) => {
+    this.setState({loading: true});
+
+    let keys = []
+    if (string === 'pass') {
+      let selectedRowKeys = this.state.selectedRowKeys
+      for (let i = 0; i < selectedRowKeys.length; i++) {
+        let num = selectedRowKeys[i]
+        let server = this.state.Servers[num]
+        let id = server.id
+        keys.push(id)
+      }
+    } else if (string === 'reject') {
+      let selectedRowKeys = this.state.selectedRowKeys
+      for (let i = 0; i < selectedRowKeys.length; i++) {
+        let num = selectedRowKeys[i]
+        let server = this.state.Servers[num]
+        let id = server.id
+        keys.push(id)
+      }
+    }
+    // ajax request after empty completing
+
+    for (let i = 0; i < keys.length; i++) {
+      const ID = keys[i]
+      const URL = 'http://volunteer.andyhui.xin/vps/' + ID
+      const token = localStorage.token
+      let applyRes = 0
+      if (string === "pass") {
+        applyRes = 0
+      } else {
+        applyRes = 1
       }
 
-      this.getServer = this.getServer.bind(this)
-      this.onChangeDate=this.onChangeDate.bind(this)
-      this.handleSearch=this.handleSearch.bind(this)
+      let apply_status = 1
+      let apply_res = applyRes
+
+      let DATES = this.state.Servers
+      let DATA = DATES[i]
+
+      const config = {
+        method: 'post',
+        url: URL,
+        headers: {"Content-Type": "application/json", "token": token},
+        data: {
+          "title": DATA.title,
+          "content": DATA.content,
+          "position_name": DATA.position_name,
+          "position_cdn": DATA.position_cdn,
+          "join_start_at": DATA.join_start_at,
+          "join_end_at": DATA.join_end_at,
+          "start_at": DATA.start_at,
+          "end_at": DATA.end_at,
+          "people_num": DATA.people_num,
+          "main_picture": DATA.main_picture,
+          "second_picture": DATA.second_picture,
+          "third_picture": DATA.third_picture,
+          "status": DATA.status,
+          "type": DATA.type,
+          "apply_status": apply_status,
+          "apply_res": apply_res
+        }
+      }
+
+      if (token) {
+        axios(config)
+          .then((res) => {
+            if (res) {
+              if (res.data.code === 2000) {
+                if(string==='pass'){
+                  message.success("审核成功")
+                }else if(string==='reject'){
+                  message.success("审核拒绝")
+                }
+              } else {
+                message.error("请重新登录")
+                this.props.history.push('/')
+              }
+            }
+          })
+          .catch(function (err) {
+            console.log(err)
+          })
+      }
+
     }
+    setTimeout(() => {
+      this.setState({
+        selectedRowKeys: [],
+        loading: false,
+      });
+    }, 1000);
+  }
+  onSelectChange = (selectedRowKeys) => {
+    this.setState({selectedRowKeys});
+  }
+
 
   handleMenuClick(e) {
     message.info('暂时无法搜索.');
     console.log('click', e);
   }
 
-  onChangeDate(e){
 
-    //http://momentjs.cn/docs/#/displaying/calendar-time/ 文档
-    let dates=e.valueOf()
-    this.setState({
-      dateRange:[dates[0],dates[1]]
-    })
-    // console.log("123")
-    // console.log(this.state.dateRange)
-    // let dateTest=moment("2018-04-26 12:09:47","YYYY-MM-DD hh:mm:ss")
-    // console.log(dateTest.calendar())
-    this.getServer("date")
-  }
-
-
-  componentWillMount()
-  {
-    // console.log(this.props)
+  componentWillMount() {
     this.getServer()
   }
 
-  handleSearch(e){
-
-    let value=e.target.value
-
-    // console.log(e.target.value)
-    // this.setState({keyWords:value})
-    this.getServer("keyWords",value)
+  handleSearch(e) {
+    let value = e.target.value
+    this.getServer("keyWords", value)
   }
 
-  getServer(order,string)
-  {
-    if(!order){
+  getServer(order, string) {
+    if (!order) {
       axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
         .then(res => {
+          // console.log("res:", res)
           const Servers = (res.data.vpList.data || []).map((item, index) => {
             return {
+              title: item.title,
+              content: item.content,
+              position_name: item.position_name,
+              position_cdn: item.position_cdn,
+              join_start_at: item.join_start_at,
+              join_end_at: item.join_end_at,
+              start_at: item.start_at,
+              end_at: item.end_at,
+              people_num: item.people_num,
+              main_picture: item.main_picture,
+              second_picture: item.second_picture,
+              third_picture: item.third_picture,
+              status: item.status,
+              type: item.type,
               key: index,
               id: item.id,
               name: item.title,
               time: item.start_at,
-              state: (item.apply_status?'审核通过':'待审核'),
+              apply_status: searchContent[item.apply_status],
             }
           })
           this.setState({Servers: Servers})
-          // console.log(res.data.vpList.data[0])
-          // console.log(this.state.Servers)
         })
-    }else if(order==="date"){
+    }
+    else if (order === "status") {
 
-      axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
-        .then(res => {
-          let i=0;
-          const Servers = (res.data.vpList.data || []).map((item, index) => {
-
-
-            let joinData=item.start_at
-            joinData=joinData.substr(0,10)
-
-
-            let Start=this.state.dateRange[0]
-            Start=Start.calendar(null,{sameElse:"YYYY-MM-DD"})
-
-            let End=this.state.dateRange[1]
-            End=End.calendar(null,{sameElse:"YYYY-MM-DD"})
-
-            // console.log(joinData,"1")
-            // console.log(Start,"2")
-            // console.log(End,"3")
-
-
-            if(moment(joinData).isBetween(Start,End)){
-              i=1
-              return {
-                key: index,
-                id: item.id,
-                name: item.title,
-                time: item.start_at,
-                state: item.status,
-              }
-            }else{}
-          })
-          if(i){
-            this.setState({Servers: Servers})
-          }else {
-            this.setState({Servers:[{
-                key: 1,
-                id:1,
-                name: '没有找到',
-                time: '没有找到',
-                state: '没有找到',
-              }]})
-          }
-          // console.log(res.data.vpList.data[0])
-          console.log(localStorage.token)
-          // console.log(this.state.Servers)
-        })
-
-    }else if(order==="statufs"){
-
-    }else if(order==="keyWords"){
-      let keyWords=string
-      console.log("keywords: ",keyWords)
-      let i=0
+    } else if (order === "keyWords") {
+      let keyWords = string
+      // console.log("keywords: ", keyWords)
+      let i = 0
       axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
         .then(res => {
           let Servers = (res.data.vpList.data || []).map((item, index) => {
-
-           let  str=new RegExp(keyWords)
-
-            console.log(item.title,"and",str)
-            if(str.test(item.title)){
-              i=1
+            let str = new RegExp(keyWords)
+            if (str.test(item.title)) {
+              i = 1
               return {
-                key: index,
+                key:index,
                 id: item.id,
                 name: item.title,
                 time: item.start_at,
-                state: item.status,
+                apply_status: searchContent[item.apply_status],
               }
-            }else {}
+            } else {
+
+            }
 
           })
 
-          if(i){
-            let Ans=[]
-            for(let i=0;i<Servers.length;i++){
-              if(typeof(Servers[i])==="undefined"){}
+          if (i) {
+            let Ans = []
+            for (let i = 0; i < Servers.length; i++) {
+              if (typeof(Servers[i]) === "undefined") {
+              }
               else {
                 Ans.push(Servers[i])
               }
             }
-            console.log("Ans: ",Ans)
-            Servers=Ans
-
-            this.setState({Servers:Servers})
-            // console.log(Servers)
-          }else {
-            this.setState({Servers:[{
-                key: 1,
-                id:1,
+            Servers = Ans
+            this.setState({Servers: Servers})
+          } else {
+            this.setState({
+              Servers: [{
+                key:1,
+                id: 1,
                 name: '没有找到',
                 time: '没有找到',
-                state: '没有找到',
-              }]})
+                apply_status: '没有找到',
+              }]
+            })
           }
-          // console.log(res.data.vpList.data[0])
-          console.log(localStorage.token)
-          // console.log(this.state.Servers)
         })
 
     }
 
   }
-    render(){
-      const columns = [
-        {
-          title: '序号',
-          dataIndex: 'id',
-          key: 'id'
-        },
-        {
-          title: '活动名称',
-          dataIndex: 'name',
-          key: 'name',
-          render: text => <a href="#">{text}</a>,
-        }, {
-          title: '发布时间',
-          dataIndex: 'time',
-          key: 'time',
-        }, {
-          title: '审核状态',
-          dataIndex: 'state',
-          key: 'state',
-        },
-        {
-          title: '操作',
-          key: 'action',
-          render: (text, record) => {
-            // console.log('a', record)
-            // console.log('b',text)
-            return  (
-              <span>
-      {/*<a href="#">{record.name}</a>*/}
-              <Divider type="vertical" />
+
+  handleSearchDate(e) {
+    this.setState({
+      Servers: e
+    })
+  }
+
+  render() {
+    const columns = [
+      {
+        title: '序号',
+        dataIndex: 'id',
+        key: 'id'
+      },
+      {
+        title: '活动名称',
+        dataIndex: 'name',
+        key: 'name',
+        // render: text => <a href="#">{text}</a>,
+      }, {
+        title: '发布时间',
+        dataIndex: 'time',
+        key: 'time',
+      },
+      {
+        title: "审核状态",
+        dataIndex: 'apply_status',
+        key: 'apply_status'
+      },
+      {
+        title: '操作',
+        key: 'action',
+        render: (text, record) => {
+          return (
+            <span>
               <Link to={`/unpass/${record.id}`} className="ant-dropdown-link">
         详情 <Icon type="down"/>
       </Link>
     </span>
-            )
-          },
-    }];
+          )
+        },
+      }];
 
-      const Search = Input.Search;
-
-      // let searchContent = this.props.searchContent;
-      let searchContent = ['待审核','已审核']
-      let searchMenu = []
-      for (let i = 0; i < searchContent.length; i++) {
-        searchMenu.push(<Menu.Item key={i}>{searchContent[i]}</Menu.Item>)
-      }
-
-      const menu1 = (
-        <Menu onClick={this.handleMenuClick}>
-          {searchMenu}
-        </Menu>
-      );
-
-      let styleButton = {marginLeft: 8, position: 'relative', top: 2 + 'px'}
-
-      return(
-        <div>
-          <Choose/>
-          <div >
-          {/*<Search searchContent={searchContent}/>*/}
-
-            <RangePicker
-              defaultValue={[moment('2018-03-01', dateFormat), moment('2018-03-02', dateFormat)]}
-              format={dateFormat}
-              onChange={this.onChangeDate}
-            />
-
-            <Dropdown overlay={menu1}>
-              <Button style={styleButton}>
-                活动状态 <Icon type="down"/>
-              </Button>
-
-            </Dropdown>
-
-            <Search
-              placeholder="input search text"
-              onBlur={(e)=>{this.handleSearch(e)}}
-              style={{width: 200,top:-1}}
-              enterButton
-            />
-
-
-            <br/><br/><br/><br/><br/>
-
-          </div>
-          <div >
-            <Dropdown overlay={menu}>
-              <Button style={{ marginLeft: 8 }}>
-                批量操作 <Icon type="down" />
-              </Button>
-            </Dropdown>
-          </div>
-
-          <div className="show">
-            <Table columns={columns} dataSource={this.state.Servers}/>
-          </div>
-        </div>
-      )
+    const Search = Input.Search;
+    let searchApplyStatus = ['待审核', '已审核']
+    let searchMenu = []
+    for (let i = 0; i < searchApplyStatus.length; i++) {
+      searchMenu.push(<Menu.Item key={i}>{searchApplyStatus[i]}</Menu.Item>)
     }
+    const menu1 = (
+      <Menu onClick={this.handleMenuClick}>
+        {searchMenu}
+      </Menu>
+    );
+
+    let styleButton = {marginLeft: 8, position: 'relative', top: 2 + 'px'}
+
+    const {loading, selectedRowKeys} = this.state;
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange,
+    };
+    const hasSelected = selectedRowKeys.length > 0;
+
+    return (
+      <div>
+        <Choose/>
+        <div>
+          <SearchDate handleSearchDate={this.handleSearchDate.bind(this)}
+                      Url="http://volunteer.andyhui.xin/vps/list/0"/>
+          <Dropdown overlay={menu1}>
+            <Button style={styleButton}>
+              活动状态 <Icon type="down"/>
+            </Button>
+
+          </Dropdown>
+
+          <Search
+            placeholder="input search text"
+            onBlur={(e) => {
+              this.handleSearch(e)
+            }}
+            style={{width: 200, top: -1}}
+            enterButton
+          />
+
+
+          <br/><br/><br/><br/><br/>
+
+        </div>
+
+        <div style={{marginBottom: 16}}>
+          <Button
+            type="primary"
+            onClick={() => {
+              this.start("pass")
+            }}
+            disabled={!hasSelected}
+            loading={loading}
+          >
+            审核通过
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              this.start("reject")
+            }}
+            disabled={!hasSelected}
+            loading={loading}
+          >
+            审核拒绝
+          </Button>
+
+
+          <span style={{marginLeft: 8}}>
+            {hasSelected ? `选择了 ${selectedRowKeys.length} 个` : ''}
+          </span>
+        </div>
+        <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers}/>
+
+
+      </div>
+    )
+  }
 }
-
-
 
 
 export default ServiceUnpassList

@@ -41,7 +41,7 @@ export default [
   },
   {
     name: 'activity',
-    path: '/activity/1'
+    path: '/activity/:id'
   },
   {
     name: 'unpass',
