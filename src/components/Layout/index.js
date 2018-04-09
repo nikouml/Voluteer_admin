@@ -4,26 +4,23 @@
 import React from 'react'
 import { Link } from 'dva/router'
 import './index.less'
-import { Layout, Menu, Icon, Button, message } from 'antd';
+import { Layout, Menu, Icon, Button, message } from 'antd'
 import 'antd/dist/antd.css'
-import path, {namesMap} from 'routerForm/index'
+import path, { namesMap } from 'routerForm/index'
 import axios from 'axios'
-import {withRouter} from 'dva/router'
-
+import { withRouter } from 'dva/router'
 
 const {HomePage, AsyncPage, welfare, icontrol, helpc, show, servicelist} = namesMap
 const {Header, Content, Footer, Sider} = Layout
-const SubMenu = Menu.SubMenu;
+const SubMenu = Menu.SubMenu
 
-function itemRender(route, params, routes, paths) {
-  const last = routes.indexOf(route) === routes.length - 1;
-  return last ? <span>{route.breadcrumbName}</span> : <Link to={paths.join('/')}>{route.breadcrumbName}</Link>;
+function itemRender (route, params, routes, paths) {
+  const last = routes.indexOf(route) === routes.length - 1
+  return last ? <span>{route.breadcrumbName}</span> : <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
 }
 
-
 class LayoutContent extends React.Component {
-  constructor (props)
-  {
+  constructor (props) {
     super(props)
     this.state = {
       collapsed: false,
@@ -35,7 +32,6 @@ class LayoutContent extends React.Component {
     this.handlOut = this.handlOut.bind(this)
 
   }
-
 
   onCollapse = (collapsed) => {
     this.setState({collapsed})
@@ -57,10 +53,11 @@ class LayoutContent extends React.Component {
           console.log(res)
           message.error('非管理员用户')
         }
-    })
+      })
   }
-  handlOut(){
-   this.props.history.push('/')
+
+  handlOut () {
+    this.props.history.push('/')
   }
 
   render () {
@@ -73,19 +70,21 @@ class LayoutContent extends React.Component {
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
             <Menu.Item key="1">
-              <Icon type="desktop" />
-              <span className="nav-text">
-                  <Link to={path(HomePage)}>
+              <Link to={path(HomePage)}>
+                <Icon type="desktop" />
+                <span className="nav-text">
                           信息概览
-                  </Link>
                 </span>
+              </Link>
+
             </Menu.Item>
             <Menu.Item key="2">
-              <Icon type="video-camera" />
-              <span className="nav-text">
-                <Link to={path(servicelist)}>
+              <Link to={path(servicelist)}>
+                <Icon type="video-camera" />
+                <span className="nav-text">
                          服务项目管理
-                  </Link></span>
+                  </span>
+              </Link>
             </Menu.Item>
             <SubMenu
               key="sub1"
@@ -107,8 +106,6 @@ class LayoutContent extends React.Component {
               <Menu.Item key="11"><Link to='/role'>角色管理</Link></Menu.Item>
               <Menu.Item key="12"><Link to='/log'>日志查询</Link></Menu.Item>
             </SubMenu>
-
-
           </Menu>
         </Sider>
 
@@ -139,6 +136,5 @@ class LayoutContent extends React.Component {
     )
   }
 }
-
 
 export default withRouter(LayoutContent)
