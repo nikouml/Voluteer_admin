@@ -180,6 +180,7 @@ export default class HomePage extends PureComponent {
     }
   }
   onChartClick = (param, echarts) => {
+
     console.log(param, echarts)
     alert('chart click')
     this.setState({
@@ -196,6 +197,7 @@ export default class HomePage extends PureComponent {
     console.log('echart is ready', echarts)
   }
   componentDidMount(){
+    console.log(this.props)
     const map = new BMap.Map("allmap"); // 创建Map实例
     map.centerAndZoom(new BMap.Point(119.279814,26.053599), 16); // 初始化地图,设置中心点坐标和地图级别
     map.addControl(new BMap.MapTypeControl()); //添加地图类型控件

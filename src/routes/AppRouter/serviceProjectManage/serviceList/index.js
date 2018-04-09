@@ -25,6 +25,7 @@ class ServiceList extends Component {
   }
 
   componentWillMount () {
+    console.log(this.props)
     this.getServer()
   }
 
