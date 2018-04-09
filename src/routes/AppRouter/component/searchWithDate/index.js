@@ -1,17 +1,19 @@
 import React, {Component} from 'react'
-// import {Link} from 'dva/router'
-// import './index.css'
-import {Input, Menu, Dropdown, Button, Icon, message, Divider, DatePicker} from 'antd'
+import {message, DatePicker} from 'antd'
 import moment from 'moment'
 import axios from "axios/index";
 
 const dateFormat = 'YYYY-MM-DD';
+moment.locale('zh-cn',{
+  months : '一月_二月_三月_四月_五月_六月_七月_八月_九月_十月_十一月_十二月'.split('_'),
+  monthsShort : '1月_2月_3月_4月_5月_6月_7月_8月_9月_10月_11月_12月'.split('_'),
+  weekdays : '星期日_星期一_星期二_星期三_星期四_星期五_星期六'.split('_'),
+  weekdaysShort : '周日_周一_周二_周三_周四_周五_周六'.split('_'),
+  weekdaysMin : '日_一_二_三_四_五_六'.split('_'),
 
-
-const APIDateFormate= "YYYY-MM-DD hh:mm:ss"
-
-
+})
 const {RangePicker} = DatePicker;
+const stateName = ['发布成功', '报名中', '报名结束活动未开始', '活动进行中', '活动结束']
 
 class SearchDate extends Component {
 
@@ -24,18 +26,12 @@ class SearchDate extends Component {
     this.onChangeConsoleDate=this.onChangeConsoleDate.bind(this)
   }
 
-
   onChangeConsoleDate(e){
 
-    //http://momentjs.cn/docs/#/displaying/calendar-time/ 文档
     let dates=e.valueOf();
-    // console.log(dates)
-    // let date1=moment("2018-04-26 12:09:47","YYYY-MM-DD hh:mm:ss")
-    // console.log(date1.calendar())
     this.setState({
       dateRange:[dates[0],dates[1]]
     })
-    // this.props.handleSearchDate(dates)
     this.getServer()
   }
 
@@ -43,7 +39,6 @@ class SearchDate extends Component {
 
     let Url=this.props.Url
     axios.get(Url)
-    // axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
       .then(res => {
         if(res.data.code===2000){
           let i=0
@@ -69,9 +64,9 @@ class SearchDate extends Component {
               lastDay: 'YYYY-MM-DD',
               lastWeek: 'YYYY-MM-DD'})
 
-            console.log(joinData,"1")
-            console.log(Start,"2")
-            console.log(End,"3")
+            // console.log(joinData,"1")
+            // console.log(Start,"2")
+            // console.log(End,"3")
 
 
             if(moment(joinData).isBetween(Start,End)){
@@ -98,11 +93,11 @@ class SearchDate extends Component {
                 Ans.push(Servers[i])
               }
             }
-            console.log("Ans: ",Ans)
+            // console.log("Ans: ",Ans)
             Servers=Ans
 
             this.props.handleSearchDate(Servers)
-            console.log(Servers)
+            // console.log(Servers)
             // this.setState({Servers: Servers})
           }else {
             this.props.handleSearchDate([{
@@ -119,6 +114,8 @@ class SearchDate extends Component {
           }
         }else{
           message.error("请重新登录")
+          this.props.history.push('/')
+
         }
 
       })
@@ -126,19 +123,14 @@ class SearchDate extends Component {
 
 
   render() {
-
-
     return (
 
       <div>
-
-
         <RangePicker
           defaultValue={[moment('2018-04-01', dateFormat), moment('2018-05-01', dateFormat)]}
           format={dateFormat}
           onChange={this.onChangeConsoleDate}
         />
-
 
         <br/><br/><br/><br/><br/>
       </div>

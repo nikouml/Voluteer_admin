@@ -1,18 +1,11 @@
 import React, {Component} from 'react'
-import {Icon,Input,Button,Table,Breadcrumb } from 'antd'
+import {Icon,Table,Breadcrumb } from 'antd'
 import {Link} from 'dva/router'
 import './index.css'
-// import request from "../../../../utils/request";
 import UserEvaluation from '../userEvaluation/index'
-const titleStyle={fontSize:25,fontWeight:'bold',marginLeft:50}
-const SecondtitleStyle={fontSize:15,fontWeight:'bold',marginLeft:50}
-
-
-
+import axios from "axios/index";
 
 const routes = [
-  // {  path: '/home',
-  // breadcrumbName: '首页'},
   {
     path: '/servicelist',
     breadcrumbName: '服务项目管理'
@@ -26,35 +19,64 @@ function itemRender(route, params, routes, paths) {
 }
 
 
-
 class Activity extends Component {
 
   constructor(){
     super()
     this.state={
-      selectedRowKeys: [], // Check here to configure the default column
-      loading: false,
+      dataSource: {
+        title: '',
+        status:'',
+        join_start_at: '',
+        start_at: '',
+        end_at: '',
+        service_length: '',
+        join_end_at:'',
+        position_name: '',
+        people_num:'',
+        has_people_num: '',
+        content: '',
+        user_name: '',
+        apply_res:'',
+        apply_status:'',
+      },
     }
+    this.getServer = this.getServer.bind(this)
   }
 
-  start = () => {
-    this.setState({ loading: true })
-    // ajax request after empty completing
-    setTimeout(() => {
-      this.setState({
-        selectedRowKeys: [],
-        loading: false,
-      });
-    }, 1000);
-  }
-  onSelectChange = (selectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    this.setState({ selectedRowKeys });
+  componentWillMount() {
+    this.getServer()
   }
 
+  componentWillUnmount() {
+    this.getServer = false
+  }
 
+  getServer() {
+    axios.get(`http://volunteer.andyhui.xin/vps/${this.props.match.params.id}`)
+      .then(res => {
+        const dataSource = {
+          title: res.data.vpInfo.title,
+          join_start_at: res.data.vpInfo.join_start_at,
+          start_at: res.data.vpInfo.start_at,
+          end_at: res.data.vpInfo.end_at,
+          service_length: res.data.vpInfo.service_length,
+          position_name: res.data.vpInfo.position_name,
+          has_people_num: res.data.vpInfo.has_people_num,
+          content: res.data.vpInfo.content,
+          status:res.data.vpInfo.status,
+          user_name: res.data.vpInfo.user_name,
+          join_end_at:res.data.vpInfo.join_end_at,
+          people_num:res.data.vpInfo.people_num,
+          position_cdn:res.data.vpInfo.position_cdn,
+          apply_status: res.data.vpInfo.apply_status,
+          apply_res: res.data.vpInfo.apply_res,
+
+        }
+        this.setState({dataSource: dataSource})
+      })
+  }
   render(){
-
     const content='在实际工作中我们会遇到需要为“不定宽度的块状元素”设置居中，比如网页上的分页导航，因为分页的数量是不确定的，所以我们不能通过设置宽度来限制它的弹性。(不定宽块状元素：块状元素的宽度width不固定。)有三种方法可以对不定宽块状元素进行居中'
 
     const columns = [
@@ -100,31 +122,18 @@ class Activity extends Component {
 
       });
     }
-
-    const { loading, selectedRowKeys } = this.state;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
-    };
-    const hasSelected = selectedRowKeys.length > 0;
-
-
-
-
-
     return (
       <div>
         <div>
           <Breadcrumb itemRender={itemRender} routes={routes} />
           <Icon type="caret-right"/> <span className="firstTitle" >  需求服务信息详情</span> <br/> <br/>
-          <br/> <span>项目名称：敬老爱老</span>
-          <br/> <span>报名时间：2018年2月1日至2018年2月10日</span>
-          <br/> <span>活动时长：2018年2月13日9:00-12:00</span>
-          <br/> <span>服务时长：3小时</span>
-          <br/> <span>活动地点：福州市第二社会福利院</span>
-          <br/> <span>报名人数：10人</span>
-          <br/> <span>描述说明：到福利院开展"敬老爱老"活动</span>
-          <br/> <span>发起人：晓明</span> <br/> <br/> <br/>
+          <br/> <span>项目名称：{this.state.dataSource.title}</span>
+          <br/> <span>报名开始时间：{this.state.dataSource.join_start_at}</span>
+          <br/> <span>活动开始：{this.state.dataSource.start_at}</span>
+          <br/> <span>服务时长：{this.state.dataSource.service_length}小时</span>
+          <br/> <span>活动地点：{this.state.dataSource.position_name}</span>
+          <br/> <span>描述说明：{this.state.dataSource.content}</span>
+          <br/> <span>发起人：{this.state.dataSource.user_name}</span> <br/> <br/> <br/>
         </div>
 
         <div>
@@ -133,95 +142,27 @@ class Activity extends Component {
          <img  src={require('../../../../../images/3.png')} width={200} height={200}/>
           <br/>
           <img src={require('../../../../../images/4.png')} width={200} height={200}/>
-
           <br/> <br/> <br/>
         </div>
 
-
-
-
         <div>
           <Icon type="caret-right"/> <span className="firstTitle" >  参与项目详情</span> <br/> <br/>
-
           <div>
-            <Icon type="caret-right"/> <span className="secondTitle" >  待审核人员名单</span> <br/> <br/>
-            <div>
-              <div style={{ marginBottom: 16,marginLeft:500 }}>
-
-                <Button
-                  type="primary"
-                  onClick={this.start}
-                  disabled={!hasSelected}
-                  loading={loading}
-                  style={{marginLeft:'50px'}}
-                >
-                  通过
-                </Button>
-                <span style={{ marginLeft: 8 }}>
-            {hasSelected ? `选择了 ${selectedRowKeys.length} 个人员` : ''}
-          </span>
-              </div>
-              <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
-            </div>
-
-
-
+              <Table  columns={columns} dataSource={data} />
           </div>
-
-          {/*<div>*/}
-            {/*<Icon type="caret-right"/> <span className="secondTitle" >  参与人员名单</span> <br/> <br/>*/}
-            {/*<div>*/}
-              {/*<div style={{ marginBottom: 16,marginLeft:500 }}>*/}
-
-                {/*<Button type="primary" ><Link to='/activity/1/weixin'>微信内容编辑</Link></Button>*/}
-                {/*<Button*/}
-                  {/*type="primary"*/}
-                  {/*onClick={this.start}*/}
-                  {/*disabled={!hasSelected}*/}
-                  {/*loading={loading}*/}
-                  {/*style={{marginLeft:'50px'}}*/}
-                {/*>*/}
-                  {/*群发*/}
-                {/*</Button>*/}
-                {/*<span style={{ marginLeft: 8 }}>*/}
-            {/*{hasSelected ? `选择了 ${selectedRowKeys.length} 个人员` : ''}*/}
-          {/*</span>*/}
-              {/*</div>*/}
-              {/*<Table rowSelection={rowSelection} columns={columns} dataSource={data} />*/}
-            {/*</div>*/}
-            {/*<div>*/}
-              {/*<Icon type="caret-right"/><span className="firstTitle">参与项目影像库</span>*/}
-              {/*<br/>*/}
-              {/*<span>签到前</span> <img  src={require('../../../../../images/3.png')} width={200} height={200}/>*/}
-              {/*<br/>*/}
-              {/*<span>签到后</span> <img src={require('../../../../../images/4.png')} width={200} height={200}/>*/}
-            {/*</div>*/}
-          {/*</div>*/}
-
-
-
-
-
-
-
           <br/> <br/> <br/>
         </div>
 
         <div>
           <Icon type="caret-right"/> <span className="firstTitle" >  评价</span> <br/> <br/>
-
           <div style={{marginLeft:50}}>
             <Icon type="caret-right"/> <span className="secondTitle" >  发布者评价</span> <br/> <br/>
             <UserEvaluation writer={'张三'} content={content} date={'2016年5月5日'} />
-
             <br/><br/><br/>
-
             <Icon type="caret-right"/> <span className="secondTitle" > 志愿者评价</span> <br/> <br/>
             <UserEvaluation writer={'张三'} content={content} date={'2016年5月5日'} />
             <UserEvaluation writer={'张三'} content={content} date={'2016年5月5日'} />
-
           </div>
-
           <br/><br/><br/>
         </div>
 
@@ -233,7 +174,6 @@ class Activity extends Component {
              <span>3.xxxxxxxxx</span> <br/>
           </div>
         </div>
-
 
       </div>
     )
