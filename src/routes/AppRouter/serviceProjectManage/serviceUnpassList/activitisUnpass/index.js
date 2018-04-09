@@ -34,9 +34,6 @@ class ActivityUnpass extends Component {
     this.getServer()
   }
 
-  componentWillUnmount() {
-    this.getServer = false
-  }
 
   getServer() {
     axios.get(`http://volunteer.andyhui.xin/vps/${this.props.match.params.id}`)
