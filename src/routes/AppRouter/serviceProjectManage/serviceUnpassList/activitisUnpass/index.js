@@ -26,7 +26,6 @@ class ActivityUnpass extends Component {
     }
     this.getServer = this.getServer.bind(this)
     this.handlSubmit = this.handlSubmit.bind(this)
-    this.handlSubmit2 = this.handlSubmit2.bind(this)
   }
 
   componentWillMount() {

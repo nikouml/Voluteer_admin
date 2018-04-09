@@ -26,6 +26,7 @@ class Login extends React.Component {
           mobile: values.mobile,
           password: values.password
         }).then(res => {
+          localStorage.setItem('datetime',new Date().toLocaleTimeString())
           localStorage.setItem('token', res.data.token)
           localStorage.setItem('user_id',res.data.user_id)
           this.setState({loading: false})

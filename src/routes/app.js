@@ -22,37 +22,63 @@ import ServiceList from './AppRouter/serviceProjectManage/serviceList/index'
 import ServiceUnpaaList from './AppRouter/serviceProjectManage/serviceUnpassList/index'
 import Activity from './AppRouter/serviceProjectManage/serviceList/activities/index'
 import ActivityUnpass from './AppRouter/serviceProjectManage/serviceUnpassList/activitisUnpass/index'
+import {withRouter} from 'dva/router'
+import axios from 'axios'
+
 const {HomePage, AsyncPage, Page404,welfare, icontrol, helpc, show, order, personc,servicelist,serviceunpasslist,activity,unpass} = namesMap
 
-const App = (props) => {
-  const AsyncDemo = dynamic({component: () => System.import('./inforcontrol/asyncDemo')})
-  return (
-    <Switch>
-      <Route exact path='/' component={Login} />
-      <Layout>
-        <Route path='/home' component={Homepage} />
-        {/*<Route path={path(HomePage)} component={Homepage} />*/}
-        <Route path={path(AsyncPage)} component={AsyncDemo} />
-        <Route path='/employer' component={Employer} />
-        <Route path='/department' component={Department} />
-        <Route path='/user' component={User} />
-        <Route path='/role' component={Role} />
-        <Route path='/log' component={Log} />
-        <Route path='/info' component={Info} />
-        <Route path={path(welfare)} component={fuligood} />
-        <Route path={path(order)} component={ordercon} />
-        <Route path={path(icontrol)} component={incontrol} />
-        <Route path={path(show)} component={showactive} />
-        <Route path={path(helpc)} component={helpcontrl} />
-        <Route path={path(personc)} component={persinfor} />
-        <Route path={path(Page404)} component={NotFound} />
-        <Route path={path(servicelist)} component={ServiceList} />
-        <Route path={path(serviceunpasslist)} component={ServiceUnpaaList} />
-        <Route path={path(activity)} component={Activity} />
-        <Route path={path(unpass)} component={ActivityUnpass} />
-      </Layout>
-    </Switch>
-  )
+class APP extends React.Component{
+
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.location.pathname !== this.props.location.pathname&&parseInt(new Date().toLocaleTimeString()) < parseInt(localStorage.getItem('datetime')+'60 * 2000 * 50'))
+    {
+      this.checkToken()
+    }
+  }
+
+  checkToken () {
+      this.props.history('/login')
+  }
+  render(){
+    const AsyncDemo = dynamic({component: () => System.import('./inforcontrol/asyncDemo')})
+
+    return(
+      <Switch>
+        <Route exact path='/' component={Login} />
+        <Layout>
+          <Route path='/home' component={Homepage} />
+          {/*<Route path={path(HomePage)} component={Homepage} />*/}
+          <Route path={path(AsyncPage)} component={AsyncDemo} />
+          <Route path='/employer' component={Employer} />
+          <Route path='/department' component={Department} />
+          <Route path='/user' component={User} />
+          <Route path='/role' component={Role} />
+          <Route path='/log' component={Log} />
+          <Route path='/info' component={Info} />
+          <Route path={path(welfare)} component={fuligood} />
+          <Route path={path(order)} component={ordercon} />
+          <Route path={path(icontrol)} component={incontrol} />
+          <Route path={path(show)} component={showactive} />
+          <Route path={path(helpc)} component={helpcontrl} />
+          <Route path={path(personc)} component={persinfor} />
+          <Route path={path(Page404)} component={NotFound} />
+          <Route path={path(servicelist)} component={ServiceList} />
+          <Route path={path(serviceunpasslist)} component={ServiceUnpaaList} />
+          <Route path={path(activity)} component={Activity} />
+          <Route path={path(unpass)} component={ActivityUnpass} />
+        </Layout>
+      </Switch>
+    )
+  }
+
 }
 
-export default App
+//
+// const App = (props) => {
+//   return (
+//
+//   )
+// }
+
+export default withRouter(APP)
