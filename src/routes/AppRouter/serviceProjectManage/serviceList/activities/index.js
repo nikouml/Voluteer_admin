@@ -154,15 +154,7 @@ class Activity extends Component {
         </div>
 
         <div>
-          <Icon type="caret-right"/> <span className="firstTitle" >  评价</span> <br/> <br/>
-          <div style={{marginLeft:50}}>
-            <Icon type="caret-right"/> <span className="secondTitle" >  发布者评价</span> <br/> <br/>
-            <UserEvaluation writer={'张三'} content={content} date={'2016年5月5日'} />
-            <br/><br/><br/>
-            <Icon type="caret-right"/> <span className="secondTitle" > 志愿者评价</span> <br/> <br/>
-            <UserEvaluation writer={'张三'} content={content} date={'2016年5月5日'} />
-            <UserEvaluation writer={'张三'} content={content} date={'2016年5月5日'} />
-          </div>
+            <UserEvaluation path={this.props.match.params.id}/>
           <br/><br/><br/>
         </div>
 
