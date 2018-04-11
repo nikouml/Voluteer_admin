@@ -1,12 +1,12 @@
 import React, {Component} from 'react'
 import Choose from '../../component/choose/index'
 import SearchDate from '../../component/searchWithDate/index'
-import {Table, Icon, Dropdown, Menu, Button, message, Input} from 'antd';
+import {Table, Icon, Dropdown, Menu, Button, message, Input, Pagination} from 'antd';
 import {Link} from 'dva/router'
 import axios from 'axios/index'
 
 
-const searchContent = ['未审核', '已拒绝'];
+const searchContent = ['已拒绝', '未审核'];
 
 class ServiceUnpassList extends Component {
   constructor(props) {
@@ -35,6 +35,8 @@ class ServiceUnpassList extends Component {
       keyWords: "",
       selectedRowKeys: [], // Check here to configure the default column
       loading: false,
+      pageTotal: 1,
+      pageinationLoad: false,
     }
 
     this.getServer = this.getServer.bind(this)
@@ -70,9 +72,9 @@ class ServiceUnpassList extends Component {
       const token = localStorage.token
       let applyRes = 0
       if (string === "pass") {
-        applyRes = 0
-      } else {
         applyRes = 1
+      } else {
+        applyRes = 0
       }
 
       let apply_status = 1
@@ -110,9 +112,9 @@ class ServiceUnpassList extends Component {
           .then((res) => {
             if (res) {
               if (res.data.code === 2000) {
-                if(string==='pass'){
+                if (string === 'pass') {
                   message.success("审核成功")
-                }else if(string==='reject'){
+                } else if (string === 'reject') {
                   message.success("审核拒绝")
                 }
               } else {
@@ -146,7 +148,7 @@ class ServiceUnpassList extends Component {
 
 
   componentWillMount() {
-    this.getServer()
+    this.getServer('show')
   }
 
   handleSearch(e) {
@@ -154,12 +156,36 @@ class ServiceUnpassList extends Component {
     this.getServer("keyWords", value)
   }
 
-  getServer(order, string) {
-    if (!order) {
-      axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
+  makeState(apply_status, apply_res) {
+    if (apply_status === 0) {
+      return "未审核"
+    } else if (apply_status === 1) {
+      if (apply_res === 0) {
+        return "已拒绝"
+      } else if (apply_res === 1) {
+        return "正在发布"
+      }
+    }
+  }
+
+  getServer(order, string, page) {
+    if (order === 'show') {
+      let pageTotal = 0
+      let url = 'http://volunteer.andyhui.xin/vps/list/0'
+      if (page) {
+        url = url + '?page=' + page
+      } else {
+        url = url + '?page=1'
+      }
+      axios.get(url)
         .then(res => {
-          // console.log("res:", res)
+          console.log("res:", res)
+          pageTotal=res.data.vpList.last_page
           const Servers = (res.data.vpList.data || []).map((item, index) => {
+
+            let state
+            state = this.makeState(item.apply_status, item.apply_res)
+
             return {
               title: item.title,
               content: item.content,
@@ -179,61 +205,62 @@ class ServiceUnpassList extends Component {
               id: item.id,
               name: item.title,
               time: item.start_at,
-              apply_status: searchContent[item.apply_status],
+              state: state,
             }
           })
-          this.setState({Servers: Servers})
+          this.setState({Servers: Servers, pageTotal: pageTotal})
         })
     }
     else if (order === "status") {
 
     } else if (order === "keyWords") {
-      let keyWords = string
-      // console.log("keywords: ", keyWords)
-      let i = 0
-      axios.get(`http://volunteer.andyhui.xin/vps/list/0`)
-        .then(res => {
-          let Servers = (res.data.vpList.data || []).map((item, index) => {
-            let str = new RegExp(keyWords)
-            if (str.test(item.title)) {
-              i = 1
-              return {
-                key:index,
-                id: item.id,
-                name: item.title,
-                time: item.start_at,
-                apply_status: searchContent[item.apply_status],
+      let keyWords = string,str = new RegExp(keyWords),Ans = [],i = 0
+
+      for (let k = 0; k < this.state.pageTotal; k++) {
+        let page = k + 1
+        let URL = 'http://volunteer.andyhui.xin/vps?page=' + page
+        axios.get(URL)
+          .then(res => {
+            if (res.data.code === 2000) {
+              let vpListData = res.data.vpList.data
+              for (let j = 0; j < vpListData.length; j++) {
+                let vpData = vpListData[j]
+                if (str.test(vpData.title)) {
+                  console.log("title: ",vpData.title)
+                  i = 1
+                  Ans.push({
+                    key: vpData.id,
+                    id: vpData.id,
+                    name: vpData.title,
+                    time: vpData.start_at,
+                    apply_status: this.makeState(vpData.apply_status, vpData.apply_res),
+                  })
+                  console.log(Ans)
+                }else{
+                  console.log("str: ",str,"title: ",vpData.title)
+                }
               }
-            } else {
-
             }
-
           })
-
-          if (i) {
-            let Ans = []
-            for (let i = 0; i < Servers.length; i++) {
-              if (typeof(Servers[i]) === "undefined") {
-              }
-              else {
-                Ans.push(Servers[i])
-              }
+          .then(() => {
+            if (i) {
+              this.setState({Servers: Ans, pageinationLoad: true})
             }
-            Servers = Ans
-            this.setState({Servers: Servers})
-          } else {
-            this.setState({
-              Servers: [{
-                key:1,
-                id: 1,
-                name: '没有找到',
-                time: '没有找到',
-                apply_status: '没有找到',
-              }]
-            })
-          }
-        })
-
+            else {
+              console.log("Ans: ",Ans)
+              this.setState({
+                Servers: [{
+                  key: 1,
+                  id: 1,
+                  name: '没有找到',
+                  time: '没有找到',
+                  apply_status: '没有找到',
+                }],
+                pageinationLoad:true
+              })
+            }
+          })
+      }
     }
 
   }
@@ -242,6 +269,12 @@ class ServiceUnpassList extends Component {
     this.setState({
       Servers: e
     })
+  }
+
+  handleChoosePage(e) {
+    let page = e
+    this.getServer('show', " ", page)
+
   }
 
   render() {
@@ -263,8 +296,8 @@ class ServiceUnpassList extends Component {
       },
       {
         title: "审核状态",
-        dataIndex: 'apply_status',
-        key: 'apply_status'
+        dataIndex: 'state',
+        key: 'state'
       },
       {
         title: '操作',
@@ -300,6 +333,12 @@ class ServiceUnpassList extends Component {
       onChange: this.onSelectChange,
     };
     const hasSelected = selectedRowKeys.length > 0;
+
+    let visible = this.state.pageinationLoad
+    let display = ''
+    if (visible) {
+      display = 'none'
+    }
 
     return (
       <div>
@@ -355,7 +394,10 @@ class ServiceUnpassList extends Component {
             {hasSelected ? `选择了 ${selectedRowKeys.length} 个` : ''}
           </span>
         </div>
-        <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers}/>
+        <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible}/>
+        <Pagination defaultCurrent={1} total={500} pageSize={5} onChange={(e) => {
+          this.handleChoosePage(e)
+        }} style={{display: display}}/>
 
 
       </div>
