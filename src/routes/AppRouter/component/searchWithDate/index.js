@@ -38,67 +38,56 @@ class SearchDate extends Component {
   getServer(){
 
     let Url=this.props.Url
-    axios.get(Url)
-      .then(res => {
-        if(res.data.code===2000){
-          let i=0
-          let Servers = (res.data.vpList.data || []).map((item, index) => {
-            let joinData=item.start_at
-            joinData=joinData.substr(0,10)
+    let pageTotal=1,i=1,Ans=[]
+    for(let k=0;k<pageTotal;k++){
+      let url=Url,page=k+1
+      url=url+'?page='+page
+      axios.get(url)
+        .then(res=>{
+          if(res.data.code===2000){
+            let vpListData = res.data.vpList.data
+            for(let j=0;j<vpListData.length;j++){
+              let vpData=vpListData[j]
+              let joinData=vpData.start_at
+              joinData=joinData.substr(0,10)
 
-            let Start=this.state.dateRange[0]
-            Start=Start.calendar(null,{
-              sameElse:"YYYY-MM-DD",
-              sameDay: 'YYYY-MM-DD',
-              nextDay: 'YYYY-MM-DD',
-              nextWeek: 'YYYY-MM-DD',
-              lastDay: 'YYYY-MM-DD',
-              lastWeek: 'YYYY-MM-DD'})
+              let Start=this.state.dateRange[0]
+              Start=Start.calendar(null,{
+                sameElse:"YYYY-MM-DD",
+                sameDay: 'YYYY-MM-DD',
+                nextDay: 'YYYY-MM-DD',
+                nextWeek: 'YYYY-MM-DD',
+                lastDay: 'YYYY-MM-DD',
+                lastWeek: 'YYYY-MM-DD'})
 
-            let End=this.state.dateRange[1]
-            End=End.calendar(null,{
-              sameElse:"YYYY-MM-DD",
-              sameDay: 'YYYY-MM-DD',
-              nextDay: 'YYYY-MM-DD',
-              nextWeek: 'YYYY-MM-DD',
-              lastDay: 'YYYY-MM-DD',
-              lastWeek: 'YYYY-MM-DD'})
+              let End=this.state.dateRange[1]
+              End=End.calendar(null,{
+                sameElse:"YYYY-MM-DD",
+                sameDay: 'YYYY-MM-DD',
+                nextDay: 'YYYY-MM-DD',
+                nextWeek: 'YYYY-MM-DD',
+                lastDay: 'YYYY-MM-DD',
+                lastWeek: 'YYYY-MM-DD'})
 
-            // console.log(joinData,"1")
-            // console.log(Start,"2")
-            // console.log(End,"3")
-
-
-            if(moment(joinData).isBetween(Start,End)){
-              i=1
-              return {
-                key: index,
-                id: item.id,
-                name: item.title,
-                time: item.start_at,
-                state: item.status,
-                people_num:item.people_num,
-                has_people_num:item.has_people_num,
-                writer:item.user_name
+              if(moment(joinData).isBetween(Start,End)){
+                i=1
+                Ans.push({
+                  key: vpData.id,
+                  id: vpData.id,
+                  name: vpData.title,
+                  time: vpData.start_at,
+                  state: vpData.status,
+                  people_num:vpData.people_num,
+                  has_people_num:vpData.has_people_num,
+                  writer:vpData.user_name
+                })
               }
             }
-
-          })
-
+          }
+        })
+        .then(()=>{
           if(i){
-            let Ans=[]
-            for(let i=0;i<Servers.length;i++){
-              if(typeof(Servers[i])==="undefined"){}
-              else {
-                Ans.push(Servers[i])
-              }
-            }
-            // console.log("Ans: ",Ans)
-            Servers=Ans
-
-            this.props.handleSearchDate(Servers)
-            // console.log(Servers)
-            // this.setState({Servers: Servers})
+            this.props.handleSearchDate(Ans)
           }else {
             this.props.handleSearchDate([{
               key: 1,
@@ -110,15 +99,10 @@ class SearchDate extends Component {
               has_people_num:0,
               writer:"没有找到"
             }])
-
           }
-        }else{
-          message.error("请重新登录")
-          this.props.history.push('/')
+        })
 
-        }
-
-      })
+    }
   }
 
 
