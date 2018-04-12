@@ -37,12 +37,48 @@ class ServiceList extends Component {
   }
 
   handleMenuClick(e) {
-    message.info('暂时无法搜索.');
-    console.log('click', e);
+    let value = e.key
+    let status
+    if (value === '0') {
+      status = 1
+    }
+    else if (value === '1') {
+      status = 3
+    }
+    else {
+      status = 4
+    }
+    let url = 'http://volunteer.andyhui.xin/vps/list/' + status
+    axios.get(url)
+      .then(res => {
+        console.log(res)
+        if (res.data.code === 2000){
+          const Servers = (res.data.vpList.data || []).map((item, index) => {
+            let State = stateName[item.status]
+            return {
+              key:index,
+              id: item.id,
+              name: item.title,
+              time: item.start_at,
+              state: State,
+              people_num: item.people_num,
+              has_people_num: item.has_people_num,
+              writer: item.user_name
+            }
+          })
+          this.setState({Servers: Servers})
+        }
+        else {
+          message.error('请重新登录')
+          this.props.history.push('/')
+        }
+      })
+   // message.info('暂时无法搜索.')
+    // console.log('click', e.key)
   }
 
   handleSearch(e) {
-    let value = e;
+    let value = e
     this.getServer("keyWords", value)
   }
 
@@ -109,7 +145,7 @@ class ServiceList extends Component {
                   id: item.id,
                   name: item.title,
                   time: item.start_at,
-                  state: item.status,
+                  state: item.status
                 }
               } else {
               }
@@ -147,14 +183,14 @@ class ServiceList extends Component {
   }
 
   render() {
-    const searchContent = ['正在报名', '正在进行', '已结束', '发布人']
+    const searchContent = ['正在报名', '正在进行', '已结束']
     const Search = Input.Search;
     let searchMenu = []
     for (let i = 0; i < searchContent.length; i++) {
       searchMenu.push(<Menu.Item key={i}>{searchContent[i]}</Menu.Item>)
     }
     const menu = (
-      <Menu onClick={this.handleMenuClick}>
+      <Menu onClick={this.handleMenuClick.bind(this)}>
         {searchMenu}
       </Menu>
     );
