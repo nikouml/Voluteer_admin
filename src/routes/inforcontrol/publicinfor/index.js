@@ -2,7 +2,7 @@ import 'antd/dist/antd.css'
 import './index.css'
 import axios from 'axios'
 import React from 'react'
-import { Tabs, Icon, Input, Button, Table, Popconfirm, Menu, Dropdown,message } from 'antd'
+import { Tabs, Icon, Input, Button, Table, Popconfirm, Menu, Dropdown,message,Select } from 'antd'
 import TweenOne from 'rc-tween-one'
 import PropTypes from 'prop-types'
 
@@ -41,6 +41,7 @@ export default class incontrol extends React.Component {
     const submit = item.submit
     const preior = item.preior
     const title = item.title
+    const another = item.another
     return (
       <TabPane
         key={i}
@@ -63,6 +64,7 @@ export default class incontrol extends React.Component {
                 id={`${this.props.id}-imgBlock${i}`}
               >
                 {img}
+                {another}
               </div>
               <div
                 className={`${this.props.className}-text`}
@@ -127,7 +129,8 @@ export default class incontrol extends React.Component {
           nameinput: '无内容 ',
           sys_title: '公告标题'
         }
-      ]
+      ],
+      nowinfo: 'null'
 
     }
     this.cacheData = this.state.data.map(item => ({...item}))
@@ -137,6 +140,7 @@ export default class incontrol extends React.Component {
     this.handleButtonClick = this.handleButtonClick.bind(this)
     this.handleMenuClick = this.handleMenuClick.bind(this)
     this.getBlockChildren = this.getBlockChildren.bind(this)
+    this.getnowinfo = this.getnowinfo.bind(this)
   }
 
   onChange1 (e) {
@@ -194,10 +198,23 @@ export default class incontrol extends React.Component {
   }
 
   componentWillMount () {
-
+    this.getnowinfo()
     this.getinfo()
   }
-
+  getnowinfo(){
+    axios.get('http://volunteer.andyhui.xin/lastnotice')
+      .then(res =>{
+        if (res.data.code === 3000){
+          const nowinfo = {
+            sys_content: res.data.lastnotice,
+          }
+          this.setState({nowinfo: nowinfo})
+        }
+        else {
+          console.log(res.data.message)
+        }
+      })
+  }
   getinfo () {
     axios.get('http://volunteer.andyhui.xin/notice/list')
       .then(res => {
@@ -255,17 +272,11 @@ export default class incontrol extends React.Component {
     const childrenData = [{
       tag: {tag: '公告信息'},
       // img: <img width="10%" src="https://zos.alipayobjects.com/rmsportal/xBrUaDROgtFBRRL.png" />,
-      text: `
-      <div class="first-title">
-        <div class='second'>
-        当前公告
-        </div>
-        <div class="annonuce-content">
-        XXXXXXXXXXX
-        </div>
-        <div class="announcement">
-        &nbsp;&nbsp;历史公告信息
-          `,
+      text: `<div class="announcement">
+        历史公告信息
+      </div>`,
+      another:
+         <Input addonBefore="当前公告" defaultValue={this.state.nowinfo}  size='large'/>,
       edit: <Table bordered dataSource={this.state.data} columns={this.columns} />,
 
       // button:<EditableTable />,
