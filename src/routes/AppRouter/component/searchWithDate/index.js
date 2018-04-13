@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import reactDom from 'react-dom'
 import {message, DatePicker} from 'antd'
 import moment from 'moment'
 import axios from "axios/index";
@@ -19,9 +20,11 @@ class SearchDate extends Component {
 
   constructor() {
     super()
+
     this.state=({
       dateRange:[],
-      Servers:[]
+      Servers:[],
+      pageTotal:1
     })
     this.onChangeConsoleDate=this.onChangeConsoleDate.bind(this)
   }
@@ -30,15 +33,31 @@ class SearchDate extends Component {
 
     let dates=e.valueOf();
     this.setState({
-      dateRange:[dates[0],dates[1]]
+      dateRange:[dates[0],dates[1]],
+      Servers:[{
+        key: 1,
+        id: 1,
+        name: "没有找到",
+        time: "没有找到",
+        state: 0,
+        people_num:0,
+        has_people_num:0,
+        writer:"没有找到"
+      }],
     })
     this.getServer()
+  }
+
+  componentWillMount(){
+
   }
 
   getServer(){
 
     let Url=this.props.Url
-    let pageTotal=1,i=1,Ans=[]
+    let pageTotal=this.props.pageTotal,i=0,Ans=[]
+    console.log("pageTotal: ",pageTotal)
+
     for(let k=0;k<pageTotal;k++){
       let url=Url,page=k+1
       url=url+'?page='+page
@@ -69,6 +88,21 @@ class SearchDate extends Component {
                 lastDay: 'YYYY-MM-DD',
                 lastWeek: 'YYYY-MM-DD'})
 
+
+
+              let State
+              if (vpData.apply_status === 0) {
+                if (vpData.apply_res === 0) {
+                  State = '未审核'
+                }
+              } else if (vpData.apply_status === 1) {
+                if (vpData.apply_res === 0) {
+                  State = '已拒绝'
+                } else {
+                  State = stateName[vpData.status]
+                }
+              }
+
               if(moment(joinData).isBetween(Start,End)){
                 i=1
                 Ans.push({
@@ -76,7 +110,7 @@ class SearchDate extends Component {
                   id: vpData.id,
                   name: vpData.title,
                   time: vpData.start_at,
-                  state: vpData.status,
+                  state: State,
                   people_num:vpData.people_num,
                   has_people_num:vpData.has_people_num,
                   writer:vpData.user_name
@@ -86,8 +120,11 @@ class SearchDate extends Component {
           }
         })
         .then(()=>{
+          console.log("await")
+
           if(i){
             this.props.handleSearchDate(Ans)
+            console.log(Ans)
           }else {
             this.props.handleSearchDate([{
               key: 1,
@@ -100,9 +137,14 @@ class SearchDate extends Component {
               writer:"没有找到"
             }])
           }
-        })
 
+        })
     }
+
+
+
+
+
   }
 
 

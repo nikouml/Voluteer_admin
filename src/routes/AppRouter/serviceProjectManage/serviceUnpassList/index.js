@@ -46,7 +46,7 @@ class ServiceUnpassList extends Component {
   start = (string) => {
     this.setState({loading: true});
 
-    let keys = []
+    let keys = [], indexs=[]
     if (string === 'pass') {
       let selectedRowKeys = this.state.selectedRowKeys
       for (let i = 0; i < selectedRowKeys.length; i++) {
@@ -54,6 +54,7 @@ class ServiceUnpassList extends Component {
         let server = this.state.Servers[num]
         let id = server.id
         keys.push(id)
+        indexs.push(num)
       }
     } else if (string === 'reject') {
       let selectedRowKeys = this.state.selectedRowKeys
@@ -81,7 +82,8 @@ class ServiceUnpassList extends Component {
       let apply_res = applyRes
 
       let DATES = this.state.Servers
-      let DATA = DATES[i]
+      let DATA = DATES[indexs[i]]
+      console.log("url :",URL,"DATA: ",DATA)
 
       const config = {
         method: 'post',
@@ -127,7 +129,6 @@ class ServiceUnpassList extends Component {
             console.log(err)
           })
       }
-
     }
     setTimeout(() => {
       this.setState({
@@ -171,7 +172,7 @@ class ServiceUnpassList extends Component {
   getServer(order, string, page) {
     if (order === 'show') {
       let pageTotal = 0
-      let url = 'http://volunteer.andyhui.xin/vps/list/0'
+      let url = 'http://volunteer.andyhui.xin/vps/apply/0'
       if (page) {
         url = url + '?page=' + page
       } else {
@@ -218,7 +219,7 @@ class ServiceUnpassList extends Component {
 
       for (let k = 0; k < this.state.pageTotal; k++) {
         let page = k + 1
-        let URL = 'http://volunteer.andyhui.xin/vps?page=' + page
+        let URL = 'http://volunteer.andyhui.xin/vps/apply/0?page=' + page
         axios.get(URL)
           .then(res => {
             if (res.data.code === 2000) {
@@ -226,7 +227,7 @@ class ServiceUnpassList extends Component {
               for (let j = 0; j < vpListData.length; j++) {
                 let vpData = vpListData[j]
                 if (str.test(vpData.title)) {
-                  console.log("title: ",vpData.title)
+                  // console.log("title: ",vpData.title)
                   i = 1
                   Ans.push({
                     key: vpData.id,
@@ -235,14 +236,16 @@ class ServiceUnpassList extends Component {
                     time: vpData.start_at,
                     apply_status: this.makeState(vpData.apply_status, vpData.apply_res),
                   })
-                  console.log(Ans)
+                  // console.log(Ans)
                 }else{
-                  console.log("str: ",str,"title: ",vpData.title)
+                  // console.log("str: ",str,"title: ",vpData.title)
+                  // /vps/apply/0-1
                 }
               }
             }
           })
           .then(() => {
+            // console.log("await")
             if (i) {
               this.setState({Servers: Ans, pageinationLoad: true})
             }
@@ -267,7 +270,8 @@ class ServiceUnpassList extends Component {
 
   handleSearchDate(e) {
     this.setState({
-      Servers: e
+      Servers: e,
+      pageinationLoad:true
     })
   }
 
@@ -345,7 +349,7 @@ class ServiceUnpassList extends Component {
         <Choose/>
         <div>
           <SearchDate handleSearchDate={this.handleSearchDate.bind(this)}
-                      Url="http://volunteer.andyhui.xin/vps/list/0"/>
+                      Url="http://volunteer.andyhui.xin/vps/apply/0" pageTotal={this.state.pageTotal}/>
           <Dropdown overlay={menu1}>
             <Button style={styleButton}>
               活动状态 <Icon type="down"/>
@@ -394,11 +398,11 @@ class ServiceUnpassList extends Component {
             {hasSelected ? `选择了 ${selectedRowKeys.length} 个` : ''}
           </span>
         </div>
-        <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible}/>
+        {visible? <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={{pageSize:5}} /> : <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible} /> }
+        {/*<Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible}/>*/}
         <Pagination defaultCurrent={1} total={500} pageSize={5} onChange={(e) => {
           this.handleChoosePage(e)
         }} style={{display: display}}/>
-
 
       </div>
     )
