@@ -63,9 +63,13 @@ export default (name, options) => {
     } else {
       querystring += `${item}=${query[item]}&`
     }
-    querystring = querystring.substr(0, querystring.length - 1)
+    // querystring = querystring.substr(0, querystring.length - 1)
   })
-  return `${toPath(params)}?${querystring}`
+  querystring = querystring.substr(0, querystring.length - 1)
+  if (querystring !== '') {
+    querystring = `?${querystring}`
+  }
+  return `${toPath(params)}${querystring}`
 }
 
 export {namesMap}
