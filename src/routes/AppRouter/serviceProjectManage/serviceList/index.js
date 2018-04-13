@@ -86,13 +86,14 @@ class ServiceList extends Component {
 
   handleSearchDate (e) {
     this.setState({
-      Servers: e
+      Servers: e,
+      pageinationLoad:true
     })
   }
 
   getServer (order, string, page) {
     if (order === 'show') {
-      let url = 'http://volunteer.andyhui.xin/vps'
+      let url = 'http://volunteer.andyhui.xin/vps/apply/1'
       if (page) {
         url = url + '?page=' + page
       } else {
@@ -146,7 +147,7 @@ class ServiceList extends Component {
       for (k = 0; k < pageTotal; k++) {
         let Servers = []
         let page = k + 1
-        URL = 'http://volunteer.andyhui.xin/vps' + '?page=' + page
+        URL = 'http://volunteer.andyhui.xin/vps/apply/1' + '?page=' + page
         axios.defaults.headers.common['token'] = localStorage.getItem('token') || ''
         console.log(URL)
         axios.get(URL)
@@ -203,6 +204,7 @@ class ServiceList extends Component {
             }
           })
           .then(() => {
+            // console.log("await")
             if (i) {
               this.setState({Servers: Ans, pageinationLoad: true})
             } else {
@@ -310,7 +312,8 @@ class ServiceList extends Component {
 
         <Choose />
         <SearchDate handleSearchDate={this.handleSearchDate.bind(this)}
-                    Url="http://volunteer.andyhui.xin/vps" />
+                    Url="http://volunteer.andyhui.xin/vps/apply/1"  pageTotal={this.state.pageTotal}/>
+
 
         <Dropdown overlay={menu}>
           <Button style={styleButton}>
@@ -327,7 +330,8 @@ class ServiceList extends Component {
         />
 
         <div className="show">
-          <Table columns={columns} dataSource={this.state.Servers} pagination={visible} />
+          {visible? <Table columns={columns} dataSource={this.state.Servers} pagination={{pageSize:5}} /> : <Table columns={columns} dataSource={this.state.Servers} pagination={visible} /> }
+          {/*<Table columns={columns} dataSource={this.state.Servers} pagination={visible} />*/}
           <Pagination defaultCurrent={1} total={50} pageSize={5} onChange={(e) => {this.handleChoosePage(e)}}
                       style={{display: display}} />
         </div>
