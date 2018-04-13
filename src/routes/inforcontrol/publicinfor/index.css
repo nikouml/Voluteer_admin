@@ -8,5 +8,12 @@
      display: inline;
 }
 .annonuce-content{
-    margin-top: 10px;
+    margin: 10px;
+}
+.second-title{
+    margin: 20px 45px;
+    font-size: 24px;
+}
+.announcement{
+    margin: 10px;
 }

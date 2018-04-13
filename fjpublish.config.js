@@ -1,4 +1,4 @@
-const config = require('./src/pushConfig')
+const config = require('./pushConfig')
 module.exports = {
   modules: config.fjPublish.modules
 }

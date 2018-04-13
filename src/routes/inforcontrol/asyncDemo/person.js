@@ -47,7 +47,7 @@ const columns = [
             <a href="#">Stop</a>
             <Dropdown overlay={menu}>
               <a href="#">
-                More <Icon type="down" />
+                详情 <Icon type="down" />
               </a>
             </Dropdown>
           </span>
@@ -151,8 +151,7 @@ export default class persinfor extends React.Component {
       />
   },
     {
-      tag: {tag: '他的个人信息'}
-    ,
+      tag: {tag: '他的个人信息'},
       // img: <img width="100%" src="https://zos.alipayobjects.com/rmsportal/xBrUaDROgtFBRRL.png" />,
       text: `
             <div class="ii">
@@ -168,12 +167,8 @@ export default class persinfor extends React.Component {
             <div class="i-list">累计服务次数</div>
             <div class="i-list">累计星级评价</div>
             <div class="i-list">累计发布需求</div>
-            
-</div>
-
-
-
-`,
+           
+            `,
     }
   ]
     const tabsChildren = childrenData.map(this.getBlockChildren)
