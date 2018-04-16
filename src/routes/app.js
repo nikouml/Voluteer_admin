@@ -7,7 +7,7 @@ import dynamic from 'dva/dynamic'
 import ordercon from './inforcontrol/welfare/order'
 import incontrol from './inforcontrol/publicinfor'
 import Layout from 'components/Layout'
-import path, {namesMap} from 'routerForm'
+import path, { namesMap } from 'routerForm'
 import Login from 'components/AdminLogin/AdminLogin'
 import Employer from 'components/EmployerAdmin/EmployerAdmin'
 import Department from 'components/DepartmentAdmin/DepartmentAdmin'
@@ -22,28 +22,83 @@ import ServiceList from './AppRouter/serviceProjectManage/serviceList/index'
 import ServiceUnpaaList from './AppRouter/serviceProjectManage/serviceUnpassList/index'
 import Activity from './AppRouter/serviceProjectManage/serviceList/activities/index'
 import ActivityUnpass from './AppRouter/serviceProjectManage/serviceUnpassList/activitisUnpass/index'
-import {withRouter} from 'dva/router'
+import { withRouter } from 'dva/router'
+import { connect } from 'dva'
 import axios from 'axios'
 
-const {HomePage, AsyncPage, Page404,welfare, icontrol, helpc, show, order, personc,servicelist,serviceunpasslist,activity,unpass} = namesMap
-
-class APP extends React.Component{
+const {HomePage, AsyncPage, Page404, welfare, icontrol, helpc, show, order, personc, servicelist, serviceunpasslist, activity, unpass} = namesMap
 
 
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.location.pathname !== this.props.location.pathname&&parseInt(new Date().toLocaleTimeString()) < parseInt(localStorage.getItem('datetime')+'60 * 2000 * 50'))
-    {
-      this.checkToken()
+function requireAuthentication(Component) {
+  // 组件有已登陆的模块 直接返回 (防止从新渲染)
+  if (Component.AuthenticatedComponent) {
+    return Component.AuthenticatedComponent
+  }
+class AuthenticatedComponent extends React.Component {
+  static contextTypes = {
+    router: React.PropTypes.object.isRequired,
+  }
+
+  state = {
+    login: true,
+  }
+
+  componentWillMount() {
+    this.checkAuth();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.checkAuth();
+  }
+
+  checkAuth() {
+
+    // 判断登陆
+    const token  = this.props.token;
+    const login = token ? token.login : null;
+
+
+    // 未登陆重定向到登陆页面
+    if (!login) {
+      let redirect = this.props.location.pathname + this.props.location.search;
+      this.context.router.push('/login?message=401&redirect_uri=' + encodeURIComponent(redirect));
+      return;
     }
+
+    this.setState({login});
   }
 
-  checkToken () {
-      this.props.history('/login')
+  render() {
+    if (this.state.login) {
+      return <Component {...this.props}/>
+    }
+    return ''
   }
-  render(){
+}
+
+// 不使用 react-redux 的话直接返回
+// Component.AuthenticatedComponent = AuthenticatedComponent
+// return Component.AuthenticatedComponent
+
+
+function mapStateToProps(state) {
+  return {
+    token: state.token,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {};
+}
+Component.AuthenticatedComponent = connect(mapStateToProps, mapDispatchToProps)(AuthenticatedComponent);
+return Component.AuthenticatedComponent
+}
+class APP extends React.Component {
+
+  render () {
     const AsyncDemo = dynamic({component: () => System.import('./inforcontrol/asyncDemo')})
 
-    return(
+    return (
       <Switch>
         <Route exact path='/' component={Login} />
         <Layout>
@@ -67,6 +122,7 @@ class APP extends React.Component{
           <Route path={path(serviceunpasslist)} component={ServiceUnpaaList} />
           <Route path={path(activity)} component={Activity} />
           <Route path={path(unpass)} component={ActivityUnpass} />
+          {/*<Redirect from='*' to='/404' />*/}
         </Layout>
       </Switch>
     )

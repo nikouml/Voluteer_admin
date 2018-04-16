@@ -38,7 +38,7 @@ export default {
           'alias': alias
         }]
       ],
-      publicPath: 'http://qhdjl.cdn.neuqzxy.cn/fe'
+      publicPath: '/'
     }
   },
   publicPath: '/'

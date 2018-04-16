@@ -28,7 +28,7 @@ class ServiceList extends Component {
       },
       pageinationLoad: false,
       pageTotal: 1,
-      counter: 0
+      total:1
     }
     this.getServer = this.getServer.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
@@ -55,7 +55,6 @@ class ServiceList extends Component {
       .then(res => {
         console.log(res)
         if (res.data.code === 2000) {
-          console.log('total:', res.data.vpList.total)
           const Servers = (res.data.vpList.data || []).map((item, index) => {
             let State = stateName[item.status]
             return {
@@ -88,30 +87,30 @@ class ServiceList extends Component {
 
   handleSearchDate (e) {
     this.setState({
-      Servers: e
+      Servers: e,
+      pageinationLoad:true
     })
   }
 
   getServer (order, string, page) {
     if (order === 'show') {
-      let url = 'http://volunteer.andyhui.xin/vps'
+      let url = 'http://volunteer.andyhui.xin/vps/apply/1'
       if (page) {
         url = url + '?page=' + page
       } else {
         url = url + '?page=1'
       }
-      console.log(url)
+      // console.log(url)
       axios.defaults.headers.common['token'] = localStorage.getItem('token') || ''
       axios.get(url)
         .then(res => {
           if (res.data.code === 2000) {
-            console.log(res)
+            // console.log(res)
             let pageTotal = res.data.vpList.last_page
-            // let counter = 0
+            let total=res.data.vpList.total
             const Servers = (res.data.vpList.data || []).map((item, index) => {
               let State
               if (item.apply_status === 0) {
-               // counter = counter + 1
                 if (item.apply_res === 0) {
                   State = '未审核'
                 }
@@ -133,8 +132,7 @@ class ServiceList extends Component {
                 writer: item.user_name
               }
             })
-            this.setState({Servers: Servers, pageTotal: pageTotal})
-            // this.setState({counter: counter})
+            this.setState({Servers: Servers, pageTotal: pageTotal,total:total})
           }
           else {
             message.error('请重新登录')
@@ -151,9 +149,9 @@ class ServiceList extends Component {
       for (k = 0; k < pageTotal; k++) {
         let Servers = []
         let page = k + 1
-        URL = 'http://volunteer.andyhui.xin/vps' + '?page=' + page
+        URL = 'http://volunteer.andyhui.xin/vps/apply/1' + '?page=' + page
         axios.defaults.headers.common['token'] = localStorage.getItem('token') || ''
-        console.log(URL)
+        // console.log(URL)
         axios.get(URL)
           .then(res => {
             if (res.data.code === 2000) {
@@ -208,10 +206,11 @@ class ServiceList extends Component {
             }
           })
           .then(() => {
+            // console.log("await")
             if (i) {
               this.setState({Servers: Ans, pageinationLoad: true})
             } else {
-              console.log('not find')
+              // console.log('not find')
               this.setState({
                 Servers: [{
                   key: 1,
@@ -231,12 +230,12 @@ class ServiceList extends Component {
   }
 
   handleChoosePage (e) {
-    console.log(e)
+    // console.log(e)
     // this.setState({
     //   currentPage:e
     // })
     let page = e
-    console.log(page)
+    // console.log(page)
     this.getServer('show', ' ', page)
 
   }
@@ -244,7 +243,6 @@ class ServiceList extends Component {
   render () {
     const searchContent = ['正在报名', '正在进行', '已结束']
     const Search = Input.Search
-    const counter = this.state.counter
     let searchMenu = []
     for (let i = 0; i < searchContent.length; i++) {
       searchMenu.push(<Menu.Item key={i}>{searchContent[i]}</Menu.Item>)
@@ -314,9 +312,10 @@ class ServiceList extends Component {
     return (
       <div>
 
-        <Choose /> <span>111111{counter}</span>
+        <Choose />
         <SearchDate handleSearchDate={this.handleSearchDate.bind(this)}
-                    Url="http://volunteer.andyhui.xin/vps" />
+                    Url="http://volunteer.andyhui.xin/vps/apply/1"  pageTotal={this.state.pageTotal}/>
+
 
         <Dropdown overlay={menu}>
           <Button style={styleButton}>
@@ -333,8 +332,9 @@ class ServiceList extends Component {
         />
 
         <div className="show">
-          <Table columns={columns} dataSource={this.state.Servers} pagination={visible} />
-          <Pagination defaultCurrent={1} total={50} pageSize={5} onChange={(e) => {this.handleChoosePage(e)}}
+          {visible? <Table columns={columns} dataSource={this.state.Servers} pagination={{pageSize:5}} /> : <Table columns={columns} dataSource={this.state.Servers} pagination={visible} /> }
+          {/*<Table columns={columns} dataSource={this.state.Servers} pagination={visible} />*/}
+          <Pagination defaultCurrent={1} total={this.state.total} pageSize={5} onChange={(e) => {this.handleChoosePage(e)}}
                       style={{display: display}} />
         </div>
       </div>

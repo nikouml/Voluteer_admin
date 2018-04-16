@@ -1,7 +1,7 @@
 export default [
   {
     name: 'Page404',
-    path: '/404'
+    path: '/404/'
   },
   {
     name: 'AsyncPage',
