@@ -27,7 +27,8 @@ class ServiceList extends Component {
         dataRange: []
       },
       pageinationLoad: false,
-      pageTotal: 1
+      pageTotal: 1,
+      total:1
     }
     this.getServer = this.getServer.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
@@ -99,13 +100,14 @@ class ServiceList extends Component {
       } else {
         url = url + '?page=1'
       }
-      console.log(url)
+      // console.log(url)
       axios.defaults.headers.common['token'] = localStorage.getItem('token') || ''
       axios.get(url)
         .then(res => {
           if (res.data.code === 2000) {
-            console.log(res)
+            // console.log(res)
             let pageTotal = res.data.vpList.last_page
+            let total=res.data.vpList.total
             const Servers = (res.data.vpList.data || []).map((item, index) => {
               let State
               if (item.apply_status === 0) {
@@ -130,7 +132,7 @@ class ServiceList extends Component {
                 writer: item.user_name
               }
             })
-            this.setState({Servers: Servers, pageTotal: pageTotal})
+            this.setState({Servers: Servers, pageTotal: pageTotal,total:total})
           }
           else {
             message.error('请重新登录')
@@ -149,7 +151,7 @@ class ServiceList extends Component {
         let page = k + 1
         URL = 'http://volunteer.andyhui.xin/vps/apply/1' + '?page=' + page
         axios.defaults.headers.common['token'] = localStorage.getItem('token') || ''
-        console.log(URL)
+        // console.log(URL)
         axios.get(URL)
           .then(res => {
             if (res.data.code === 2000) {
@@ -208,7 +210,7 @@ class ServiceList extends Component {
             if (i) {
               this.setState({Servers: Ans, pageinationLoad: true})
             } else {
-              console.log('not find')
+              // console.log('not find')
               this.setState({
                 Servers: [{
                   key: 1,
@@ -228,12 +230,12 @@ class ServiceList extends Component {
   }
 
   handleChoosePage (e) {
-    console.log(e)
+    // console.log(e)
     // this.setState({
     //   currentPage:e
     // })
     let page = e
-    console.log(page)
+    // console.log(page)
     this.getServer('show', ' ', page)
 
   }
@@ -332,7 +334,7 @@ class ServiceList extends Component {
         <div className="show">
           {visible? <Table columns={columns} dataSource={this.state.Servers} pagination={{pageSize:5}} /> : <Table columns={columns} dataSource={this.state.Servers} pagination={visible} /> }
           {/*<Table columns={columns} dataSource={this.state.Servers} pagination={visible} />*/}
-          <Pagination defaultCurrent={1} total={50} pageSize={5} onChange={(e) => {this.handleChoosePage(e)}}
+          <Pagination defaultCurrent={1} total={this.state.total} pageSize={5} onChange={(e) => {this.handleChoosePage(e)}}
                       style={{display: display}} />
         </div>
       </div>

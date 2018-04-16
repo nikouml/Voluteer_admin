@@ -6,7 +6,6 @@ import {Link} from 'dva/router'
 import axios from 'axios/index'
 
 
-const searchContent = ['已拒绝', '未审核'];
 
 class ServiceUnpassList extends Component {
   constructor(props) {
@@ -83,7 +82,7 @@ class ServiceUnpassList extends Component {
 
       let DATES = this.state.Servers
       let DATA = DATES[indexs[i]]
-      console.log("url :",URL,"DATA: ",DATA)
+      // console.log("url :",URL,"DATA: ",DATA)
 
       const config = {
         method: 'post',
@@ -171,7 +170,7 @@ class ServiceUnpassList extends Component {
 
   getServer(order, string, page) {
     if (order === 'show') {
-      let pageTotal = 0
+      let pageTotal = 0,total=1
       let url = 'http://volunteer.andyhui.xin/vps/apply/0'
       if (page) {
         url = url + '?page=' + page
@@ -180,8 +179,9 @@ class ServiceUnpassList extends Component {
       }
       axios.get(url)
         .then(res => {
-          console.log("res:", res)
+          // console.log("res:", res)
           pageTotal=res.data.vpList.last_page
+          total=res.data.vpList.total
           const Servers = (res.data.vpList.data || []).map((item, index) => {
 
             let state
@@ -209,7 +209,7 @@ class ServiceUnpassList extends Component {
               state: state,
             }
           })
-          this.setState({Servers: Servers, pageTotal: pageTotal})
+          this.setState({Servers: Servers, pageTotal: pageTotal,total:total})
         })
     }
     else if (order === "status") {
@@ -250,7 +250,7 @@ class ServiceUnpassList extends Component {
               this.setState({Servers: Ans, pageinationLoad: true})
             }
             else {
-              console.log("Ans: ",Ans)
+              // console.log("Ans: ",Ans)
               this.setState({
                 Servers: [{
                   key: 1,
@@ -400,7 +400,7 @@ class ServiceUnpassList extends Component {
         </div>
         {visible? <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={{pageSize:5}} /> : <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible} /> }
         {/*<Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible}/>*/}
-        <Pagination defaultCurrent={1} total={500} pageSize={5} onChange={(e) => {
+        <Pagination defaultCurrent={1} total={this.state.total} pageSize={5} onChange={(e) => {
           this.handleChoosePage(e)
         }} style={{display: display}}/>
 
