@@ -2,21 +2,52 @@ import React from 'react'
 import './index.css'
 import 'antd/dist/antd.css'
 import { Input, Button,Icon } from 'antd'
+import axios from 'axios'
+import { welfare } from '../../../routerForm/app'
 const {TextArea} = Input
 
 export default class helpcontrl extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      disabled: true
+      disabled: true,
+      faqInfo:{
+        release: ' ',
+        check: ' ',
+        welfare: ' ',
+        faq: ' ',
+        contact: ' ',
+      }
 
     }
     this.handleedit = this.handleedit.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.getFAQ = this.getFAQ.bind(this)
   }
-
   handleedit (e) {
     this.setState({disabled: false})
+  }
+  componentWillMount(){
+    // this.getFAQ()
+  }
+
+  getFAQ(){
+    axios.get('http://volunteer.andyhui.xin/faq')
+      .then(res =>{
+        console.log(res.data)
+        const faqInfo ={
+
+        release:res.data.faqInfo.release,
+        // check:res.data.faqInfo.check-in,
+        welfare:res.data.faqInfo.welfare,
+        faq:res.data.faqInfo.faq,
+        contact:res.data.faqInfo.contact
+      }
+        this.setState({faqInfo: faqInfo})
+        console.log(res.data.code)
+
+      }
+  )
   }
   handleSubmit(e){
 
