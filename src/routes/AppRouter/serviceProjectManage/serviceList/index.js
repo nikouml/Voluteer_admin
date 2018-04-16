@@ -27,7 +27,8 @@ class ServiceList extends Component {
         dataRange: []
       },
       pageinationLoad: false,
-      pageTotal: 1
+      pageTotal: 1,
+      counter: 0
     }
     this.getServer = this.getServer.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
@@ -54,6 +55,7 @@ class ServiceList extends Component {
       .then(res => {
         console.log(res)
         if (res.data.code === 2000) {
+          console.log('total:', res.data.vpList.total)
           const Servers = (res.data.vpList.data || []).map((item, index) => {
             let State = stateName[item.status]
             return {
@@ -105,9 +107,11 @@ class ServiceList extends Component {
           if (res.data.code === 2000) {
             console.log(res)
             let pageTotal = res.data.vpList.last_page
+            // let counter = 0
             const Servers = (res.data.vpList.data || []).map((item, index) => {
               let State
               if (item.apply_status === 0) {
+               // counter = counter + 1
                 if (item.apply_res === 0) {
                   State = '未审核'
                 }
@@ -130,6 +134,7 @@ class ServiceList extends Component {
               }
             })
             this.setState({Servers: Servers, pageTotal: pageTotal})
+            // this.setState({counter: counter})
           }
           else {
             message.error('请重新登录')
@@ -239,6 +244,7 @@ class ServiceList extends Component {
   render () {
     const searchContent = ['正在报名', '正在进行', '已结束']
     const Search = Input.Search
+    const counter = this.state.counter
     let searchMenu = []
     for (let i = 0; i < searchContent.length; i++) {
       searchMenu.push(<Menu.Item key={i}>{searchContent[i]}</Menu.Item>)
@@ -308,7 +314,7 @@ class ServiceList extends Component {
     return (
       <div>
 
-        <Choose />
+        <Choose /> <span>111111{counter}</span>
         <SearchDate handleSearchDate={this.handleSearchDate.bind(this)}
                     Url="http://volunteer.andyhui.xin/vps" />
 
