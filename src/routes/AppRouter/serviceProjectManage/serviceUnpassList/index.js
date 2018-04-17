@@ -168,7 +168,7 @@ class ServiceUnpassList extends Component {
     }
   }
 
-  getServer(order, string, page) {
+  async getServer(order, string, page) {
     if (order === 'show') {
       let pageTotal = 0,total=1
       let url = 'http://volunteer.andyhui.xin/vps/apply/0'
@@ -220,7 +220,7 @@ class ServiceUnpassList extends Component {
       for (let k = 0; k < this.state.pageTotal; k++) {
         let page = k + 1
         let URL = 'http://volunteer.andyhui.xin/vps/apply/0?page=' + page
-        axios.get(URL)
+        await axios.get(URL)
           .then(res => {
             if (res.data.code === 2000) {
               let vpListData = res.data.vpList.data
@@ -244,28 +244,22 @@ class ServiceUnpassList extends Component {
               }
             }
           })
-          .then(() => {
-            // console.log("await")
-            if (i) {
-              this.setState({Servers: Ans, pageinationLoad: true})
-            }
-            else {
-              // console.log("Ans: ",Ans)
-              this.setState({
-                Servers: [{
-                  key: 1,
-                  id: 1,
-                  name: '没有找到',
-                  time: '没有找到',
-                  apply_status: '没有找到',
-                }],
-                pageinationLoad:true
-              })
-            }
+        if (i) {
+          this.setState({Servers: Ans, pageinationLoad: true})
+        } else {
+          this.setState({
+            Servers: [{
+              key: 1,
+              id: 1,
+              name: '无记录',
+              time: '无记录',
+              state: '无记录',
+            }],
+            pageinationLoad: true
           })
+        }
       }
     }
-
   }
 
   handleSearchDate(e) {

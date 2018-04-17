@@ -38,7 +38,7 @@ class ServiceList extends Component {
     this.getServer('show')
   }
 
-  handleMenuClick (e) {
+  async handleMenuClick (e) {
     let value = e.key
     let status
     if (value === '0') {
@@ -51,33 +51,61 @@ class ServiceList extends Component {
       status = 4
     }
     let url = 'http://volunteer.andyhui.xin/vps/list/' + status
-    axios.get(url)
-      .then(res => {
-        console.log(res)
-        if (res.data.code === 2000) {
-          const Servers = (res.data.vpList.data || []).map((item, index) => {
-            let State = stateName[item.status]
-            return {
-              key: index,
-              id: item.id,
-              name: item.title,
-              time: item.start_at,
-              state: State,
-              people_num: item.people_num,
-              has_people_num: item.has_people_num,
-              writer: item.user_name
+    let Ans = [], i=0, pageTotal = this.state.pageTotal, URL
+    let k
+    for (k = 0; k < pageTotal; k++) {
+      let Servers = []
+      let page = k + 1
+      URL = url + '?page=' + page
+      await axios.get(URL)
+        .then(res => {
+          console.log('menures:', res)
+          if (res.data.code === 2000) {
+            Servers = (res.data.vpList.data || []).map((item, index) => {
+              let State = stateName[item.status]
+              i = i + 1
+              return {
+                key: item.id,
+                id: item.id,
+                name: item.title,
+                time: item.start_at,
+                state: State,
+                people_num: item.people_num,
+                has_people_num: item.has_people_num,
+                writer: item.user_name
+              }
+
+            })
+            if (i) {
+              for (let i = 0; i < Servers.length; i++) {
+                if (typeof(Servers[i]) === 'undefined') {
+                }
+                else {
+                  Ans.push(Servers[i])
+                }
+              }
             }
-          })
-          console.log('servers:', Servers)
-          this.setState({Servers: Servers})
-        }
-        else {
-          message.error('请重新登录')
-          this.props.history.push('/')
-        }
+          }
+          else {
+            message.error('请重新登录')
+            this.props.history.push('/')
+          }
+        })
+    }
+    if (i) {
+      this.setState({Servers: Ans, pageinationLoad: true})
+    } else {
+      this.setState({
+        Servers: [{
+          key: 1,
+          id: 1,
+          name: '无记录',
+          time: '无记录',
+          state: '无记录',
+        }],
+        pageinationLoad: true
       })
-    // message.info('暂时无法搜索.')
-    // console.log('click', e.key)
+    }
   }
 
   handleSearch (e) {
@@ -92,7 +120,7 @@ class ServiceList extends Component {
     })
   }
 
-  getServer (order, string, page) {
+  async getServer (order, string, page) {
     if (order === 'show') {
       let url = 'http://volunteer.andyhui.xin/vps/apply/1'
       if (page) {
@@ -152,7 +180,7 @@ class ServiceList extends Component {
         URL = 'http://volunteer.andyhui.xin/vps/apply/1' + '?page=' + page
         axios.defaults.headers.common['token'] = localStorage.getItem('token') || ''
         // console.log(URL)
-        axios.get(URL)
+        await axios.get(URL)
           .then(res => {
             if (res.data.code === 2000) {
               // console.log(res.data.vpList.data)
@@ -205,27 +233,21 @@ class ServiceList extends Component {
 
             }
           })
-          .then(() => {
-            // console.log("await")
-            if (i) {
-              this.setState({Servers: Ans, pageinationLoad: true})
-            } else {
-              // console.log('not find')
-              this.setState({
-                Servers: [{
-                  key: 1,
-                  id: 1,
-                  name: '没有找到',
-                  time: '没有找到',
-                  state: '没有找到',
-                }],
-                pageinationLoad: true
-              })
-            }
+        if (i) {
+          this.setState({Servers: Ans, pageinationLoad: true})
+        } else {
+          this.setState({
+            Servers: [{
+              key: 1,
+              id: 1,
+              name: '无记录',
+              time: '无记录',
+              state: '无记录',
+            }],
+            pageinationLoad: true
           })
-
+        }
       }
-
     }
   }
 
