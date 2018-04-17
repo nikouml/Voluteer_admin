@@ -27,7 +27,7 @@ class Choose extends Component {
 
       <div>
         <div className="choose">
-          <Button onClick={this.handletolist} type='primary' className="list">志愿服务项目</Button>
+          <Button onClick={this.handletoList} type='primary' className="list">志愿服务项目</Button>
           <Button onClick={this.handletoUnpass} type='primary' className="desire">待审核需求 </Button>
         </div>
         <br/>
