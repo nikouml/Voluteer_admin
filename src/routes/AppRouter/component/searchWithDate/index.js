@@ -52,7 +52,7 @@ class SearchDate extends Component {
 
   }
 
-  async getServer(){
+  getServer(){
 
     let Url=this.props.Url
     let pageTotal=this.props.pageTotal,i=0,Ans=[]
@@ -61,7 +61,7 @@ class SearchDate extends Component {
     for(let k=0;k<pageTotal;k++){
       let url=Url,page=k+1
       url=url+'?page='+page
-      await axios.get(url)
+      axios.get(url)
         .then(res=>{
           if(res.data.code===2000){
             let vpListData = res.data.vpList.data
@@ -119,35 +119,28 @@ class SearchDate extends Component {
             }
           }
         })
+        .then(()=>{
+          // console.log("await")
+
+          if(i){
+            this.props.handleSearchDate(Ans)
+            // console.log(Ans)
+          }else {
+            this.props.handleSearchDate([{
+              key: 1,
+              id: 1,
+              name: "没有找到",
+              time: "没有找到",
+              state: 0,
+              people_num:0,
+              has_people_num:0,
+              writer:"没有找到"
+            }])
+          }
+
+        })
     }
 
-    if(i){
-      this.props.handleSearchDate(Ans)
-      // console.log(Ans)
-    }else {
-      this.props.handleSearchDate([{
-        key: 1,
-        id: 1,
-        name: "没有找到",
-        time: "没有找到",
-        state: 0,
-        people_num:0,
-        has_people_num:0,
-        writer:"没有找到"
-      }])
-    }
-
-
-    // console.log(Ans)
-    function takeLongTime() {
-      return new Promise(resolve => {
-        setTimeout(() => resolve("long_time_value"), 1000);
-      });
-    }
-
-    takeLongTime().then(v => {
-      console.log("got", v);
-    });
 
 
 
@@ -172,6 +165,5 @@ class SearchDate extends Component {
     )
   }
 }
-
 
 export default SearchDate
