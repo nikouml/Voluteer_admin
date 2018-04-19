@@ -172,8 +172,6 @@ class ServiceUnpassList extends Component {
   async getServer(order, string, page) {
     if (order === 'show') {
       this.setState({load:true})
-
-
       let pageTotal = 0,total=1
       let url = 'http://volunteer.andyhui.xin/vps/apply/0'
       if (page) {

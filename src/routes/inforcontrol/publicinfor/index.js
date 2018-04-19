@@ -18,16 +18,12 @@ const EditableCell = ({editable, value, onChange}) => (
 const {TextArea} = Input
 const TabPane = Tabs.TabPane
 export default class incontrol extends React.Component {
-
   static propTypes = {
     id: PropTypes.string,
     className: PropTypes.string,
   }
   static defaultProps = {
     className: 'content-table'
-  }
-  state = {
-    show: 0,
   }
   onChange = (key) => {
     this.setState({show: parseInt(key)})
@@ -109,9 +105,9 @@ export default class incontrol extends React.Component {
             <div className="editable-row-operations">
               {
                 editable ? <span>
-                  <a onClick={() => this.save(record.key)}>Save</a>
-                  <Popconfirm title="Sure to cancel?" onConfirm={() => this.cancel(record.key)}>
-                    <a>Cancel</a>
+                  <a onClick={() => this.save(record.key)}>保存</a>
+                  <Popconfirm title="确定取消吗?" onConfirm={() => this.cancel(record.key)}>
+                    <a>取消</a>
                   </Popconfirm>
                 </span>
                   : <a onClick={() => this.edit(record.key)}>编辑</a>
@@ -131,6 +127,7 @@ export default class incontrol extends React.Component {
           sys_title: '公告标题'
         }
       ],
+      show: 0,
       lastnotice: {
         sys_content: ' '
       }
@@ -159,7 +156,22 @@ export default class incontrol extends React.Component {
         value={text}
         onChange={value => this.handleChange(value, record.key, column)}
       />
+
     )
+  }
+  changeData(){
+    const IDA = record.sys_id
+    const config={
+      method:'post',
+      url:'http://volunteer.andyhui.xin/notice/'+ IDA,
+      headers:{"Content-Type":"application/json","token":localStorage.getItem('token') || ''},
+      data:{
+        sys_title:this.state.data.sys_title,
+        sys_content:this.state.data.sys_content,
+        sys_level:this.state.data.sys_level
+      }
+    }
+    axios(config)
   }
 
   handleChange (value, key, column) {
@@ -174,6 +186,7 @@ export default class incontrol extends React.Component {
   edit (key) {
     const newData = [...this.state.data]
     const target = newData.filter(item => key === item.key)[0]
+    console.log(target)
     if (target) {
       target.editable = true
       this.setState({data: newData})
@@ -205,6 +218,7 @@ export default class incontrol extends React.Component {
     this.getinfo()
   }
   getnowinfo() {
+    console.log(this.props)
     axios.get('http://volunteer.andyhui.xin/lastnotice')
       .then(res =>{
         if (res.data.code === 3001) {
