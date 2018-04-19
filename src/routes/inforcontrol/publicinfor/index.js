@@ -62,6 +62,7 @@ export default class incontrol extends React.Component {
               <div
                 className={`${this.props.className}-img`}
                 id={`${this.props.id}-imgBlock${i}`}
+                style={{fontSize: 100}}
               >
                 {img}
                 {another}
@@ -130,7 +131,9 @@ export default class incontrol extends React.Component {
           sys_title: '公告标题'
         }
       ],
-      nowinfo: 'null'
+      lastnotice: {
+        sys_content: ' '
+      }
 
     }
     this.cacheData = this.state.data.map(item => ({...item}))
@@ -147,7 +150,7 @@ export default class incontrol extends React.Component {
     this.setState({nameinput: e.target.value})
   }
   onChange2(e) {
-    this.setState({sys_title:e.target.value})
+    this.setState({sys_title: e.target.value})
   }
   renderColumns (text, record, column) {
     return (
@@ -201,17 +204,18 @@ export default class incontrol extends React.Component {
     this.getnowinfo()
     this.getinfo()
   }
-  getnowinfo(){
+  getnowinfo() {
     axios.get('http://volunteer.andyhui.xin/lastnotice')
       .then(res =>{
-        if (res.data.code === 3000){
-          const nowinfo = {
-            sys_content: res.data.lastnotice,
+        if (res.data.code === 3001) {
+          const lastnotice = {
+            sys_content: res.data.lastnotice.sys_content
           }
-          this.setState({nowinfo: nowinfo})
+          this.setState({lastnotice: lastnotice})
         }
         else {
-          console.log(res.data.message)
+          console.log(res.data)
+          console.log('1233',this.state.lastnotice)
         }
       })
   }
@@ -272,17 +276,18 @@ export default class incontrol extends React.Component {
     const childrenData = [{
       tag: {tag: '公告信息'},
       // img: <img width="10%" src="https://zos.alipayobjects.com/rmsportal/xBrUaDROgtFBRRL.png" />,
-      text: `<div class="announcement">
+      text: `<div class="announcement" style="font-size: large">
         历史公告信息
       </div>`,
       another:
-         <Input addonBefore="当前公告" defaultValue={this.state.nowinfo}  size='large'/>,
+         <Input addonBefore="当前公告" defaultValue={this.state.lastnotice.sys_content}  size='large'/>,
       edit: <Table bordered dataSource={this.state.data} columns={this.columns} />,
 
       // button:<EditableTable />,
     },
       {
-        tag: {tag: '公告创建'},
+        tag: {tag:
+            '公告创建'},
         // img: <img width="100%" src="https://zos.alipayobjects.com/rmsportal/xBrUaDROgtFBRRL.png" />,
         text: `
             <div class="ii">     

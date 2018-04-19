@@ -180,9 +180,9 @@ class ServiceUnpassList extends Component {
       }
       axios.get(url)
         .then(res => {
-          console.log("res:", res)
-          pageTotal=res.data.vpList.last_page
-          const Servers = (res.data.vpList.data || []).map((item, index) => {
+          console.log('res:', res)
+          pageTotal = res.data.vpList.last_page
+          const Servers = (res.data.vpList.data || []).map((item, index) =>{
 
             let state
             state = this.makeState(item.apply_status, item.apply_res)
