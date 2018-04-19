@@ -2,7 +2,6 @@ import React from 'react'
 import { Form, Button, Input, Icon, message } from 'antd'
 import axios from 'axios'
 import './index.less'
-import logo from 'images/login_logo.png'
 
 const FormItem = Form.Item
 
@@ -60,7 +59,7 @@ class Login extends React.Component {
     return (
       <div className='content'>
         <div className='main-content'>
-          <img src={logo} alt="" width='150' height='150' style={{marginLeft: 120}} />
+          <img src="http://p53vmqr8d.bkt.clouddn.com/login_logo.png" alt="" width='150' height='150' style={{marginLeft: 120}} />
           <Form onSubmit={this.handleSubmit} className="login-form">
             <FormItem>
               {getFieldDecorator('mobile', {

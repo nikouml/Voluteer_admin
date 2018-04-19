@@ -1,23 +1,34 @@
 import React, {Component} from 'react'
 import {Link} from 'dva/router'
+import {Button} from 'antd'
 import './index.css'
+import { withRouter } from 'dva/router'
 
 class Choose extends Component {
 
-  constructor() {
-    super()
+  constructor (props) {
+    super(props)
+    this.state = {
+    }
+    this.handletoList = this.handletoList.bind(this)
+    this.handletoUnpass = this.handletoUnpass.bind(this)
   }
 
-  render() {
+  handletoList(){
+    this.props.history.push('./servicelist')
+  }
+  handletoUnpass(){
+    this.props.history.push('./serviceunpasslist')
+  }
+
+  render(){
 
     return (
 
       <div>
         <div className="choose">
-          <Link to="/servicelist"><span className="list">志愿服务项目</span></Link>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-          <Link to="/serviceunpasslist"><span className="desire">待审核需求</span></Link>
+          <Button onClick={this.handletoList} type='primary' className="list">志愿服务项目</Button>
+          <Button onClick={this.handletoUnpass} type='primary' className="desire">待审核需求 </Button>
         </div>
         <br/>
       </div>
@@ -27,4 +38,4 @@ class Choose extends Component {
   }
 }
 
-export default Choose
+export default withRouter(Choose)

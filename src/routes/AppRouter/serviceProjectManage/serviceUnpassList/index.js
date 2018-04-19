@@ -6,7 +6,6 @@ import {Link} from 'dva/router'
 import axios from 'axios/index'
 
 
-const searchContent = ['已拒绝', '未审核'];
 
 class ServiceUnpassList extends Component {
   constructor(props) {
@@ -37,6 +36,7 @@ class ServiceUnpassList extends Component {
       loading: false,
       pageTotal: 1,
       pageinationLoad: false,
+      load:false
     }
 
     this.getServer = this.getServer.bind(this)
@@ -83,7 +83,7 @@ class ServiceUnpassList extends Component {
 
       let DATES = this.state.Servers
       let DATA = DATES[indexs[i]]
-      console.log("url :",URL,"DATA: ",DATA)
+      // console.log("url :",URL,"DATA: ",DATA)
 
       const config = {
         method: 'post',
@@ -169,9 +169,12 @@ class ServiceUnpassList extends Component {
     }
   }
 
-  getServer(order, string, page) {
+  async getServer(order, string, page) {
     if (order === 'show') {
-      let pageTotal = 0
+      this.setState({load:true})
+
+
+      let pageTotal = 0,total=1
       let url = 'http://volunteer.andyhui.xin/vps/apply/0'
       if (page) {
         url = url + '?page=' + page
@@ -180,9 +183,10 @@ class ServiceUnpassList extends Component {
       }
       axios.get(url)
         .then(res => {
-          console.log('res:', res)
-          pageTotal = res.data.vpList.last_page
-          const Servers = (res.data.vpList.data || []).map((item, index) =>{
+          // console.log("res:", res)
+          pageTotal=res.data.vpList.last_page
+          total=res.data.vpList.total
+          const Servers = (res.data.vpList.data || []).map((item, index) => {
 
             let state
             state = this.makeState(item.apply_status, item.apply_res)
@@ -209,18 +213,20 @@ class ServiceUnpassList extends Component {
               state: state,
             }
           })
-          this.setState({Servers: Servers, pageTotal: pageTotal})
+          this.setState({Servers: Servers, pageTotal: pageTotal,total:total,load:false})
         })
     }
     else if (order === "status") {
 
     } else if (order === "keyWords") {
+      this.setState({load:true})
+
       let keyWords = string,str = new RegExp(keyWords),Ans = [],i = 0
 
       for (let k = 0; k < this.state.pageTotal; k++) {
         let page = k + 1
         let URL = 'http://volunteer.andyhui.xin/vps/apply/0?page=' + page
-        axios.get(URL)
+        await axios.get(URL)
           .then(res => {
             if (res.data.code === 2000) {
               let vpListData = res.data.vpList.data
@@ -244,25 +250,21 @@ class ServiceUnpassList extends Component {
               }
             }
           })
-          .then(() => {
-            // console.log("await")
-            if (i) {
-              this.setState({Servers: Ans, pageinationLoad: true})
-            }
-            else {
-              console.log("Ans: ",Ans)
-              this.setState({
-                Servers: [{
-                  key: 1,
-                  id: 1,
-                  name: '没有找到',
-                  time: '没有找到',
-                  apply_status: '没有找到',
-                }],
-                pageinationLoad:true
-              })
-            }
+        if (i) {
+          this.setState({Servers: Ans, pageinationLoad: true,load:false})
+        } else {
+          this.setState({
+            Servers: [{
+              key: 1,
+              id: 1,
+              name: '无记录',
+              time: '无记录',
+              state: '无记录',
+            }],
+            pageinationLoad: true,
+            load:false
           })
+        }
       }
     }
 
@@ -272,6 +274,11 @@ class ServiceUnpassList extends Component {
     this.setState({
       Servers: e,
       pageinationLoad:true
+    })
+  }
+  handleWait(){
+    this.setState({
+      load:true
     })
   }
 
@@ -349,22 +356,26 @@ class ServiceUnpassList extends Component {
         <Choose/>
         <div>
           <SearchDate handleSearchDate={this.handleSearchDate.bind(this)}
+                      handleWait={this.handleWait.bind(this)}
                       Url="http://volunteer.andyhui.xin/vps/apply/0" pageTotal={this.state.pageTotal}/>
-          <Dropdown overlay={menu1}>
-            <Button style={styleButton}>
-              活动状态 <Icon type="down"/>
-            </Button>
+          <div style={{marginTop:-50}}>
+            <Dropdown overlay={menu1}>
+              <Button style={styleButton}>
+                活动状态 <Icon type="down"/>
+              </Button>
 
-          </Dropdown>
+            </Dropdown>
 
-          <Search
-            placeholder="input search text"
-            onBlur={(e) => {
-              this.handleSearch(e)
-            }}
-            style={{width: 200, top: -1}}
-            enterButton
-          />
+            <Search
+              placeholder="input search text"
+              onBlur={(e) => {
+                this.handleSearch(e)
+              }}
+              style={{width: 200, top: -1}}
+              enterButton
+            />
+          </div>
+
 
 
           <br/><br/><br/><br/><br/>
@@ -398,11 +409,14 @@ class ServiceUnpassList extends Component {
             {hasSelected ? `选择了 ${selectedRowKeys.length} 个` : ''}
           </span>
         </div>
-        {visible? <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={{pageSize:5}} /> : <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible} /> }
-        {/*<Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible}/>*/}
-        <Pagination defaultCurrent={1} total={500} pageSize={5} onChange={(e) => {
-          this.handleChoosePage(e)
-        }} style={{display: display}}/>
+        <div style={{height:424}}>
+          {visible? <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={{pageSize:5}} loading={this.state.load}/> : <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible} loading={this.state.load} /> }
+          {/*<Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible}/>*/}
+          <Pagination defaultCurrent={1} total={this.state.total} pageSize={5} onChange={(e) => {
+            this.handleChoosePage(e)
+          }} style={{display: display,float:"right",lineHeight:1.5,marginTop:15,marginBottom:15}}/>
+        </div>
+
 
       </div>
     )

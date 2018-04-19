@@ -56,7 +56,8 @@ class SearchDate extends Component {
 
     let Url=this.props.Url
     let pageTotal=this.props.pageTotal,i=0,Ans=[]
-    console.log("pageTotal: ",pageTotal)
+    // console.log("pageTotal: ",pageTotal)
+    this.props.handleWait()
 
     for(let k=0;k<pageTotal;k++){
       let url=Url,page=k+1
@@ -120,11 +121,11 @@ class SearchDate extends Component {
           }
         })
         .then(()=>{
-          console.log("await")
+          // console.log("await")
 
           if(i){
             this.props.handleSearchDate(Ans)
-            console.log(Ans)
+            // console.log(Ans)
           }else {
             this.props.handleSearchDate([{
               key: 1,

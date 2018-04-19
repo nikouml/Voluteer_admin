@@ -27,7 +27,9 @@ class ServiceList extends Component {
         dataRange: []
       },
       pageinationLoad: false,
-      pageTotal: 1
+      pageTotal: 1,
+      total:1,
+      load:false
     }
     this.getServer = this.getServer.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
@@ -37,7 +39,7 @@ class ServiceList extends Component {
     this.getServer('show')
   }
 
-  handleMenuClick (e) {
+  async handleMenuClick (e) {
     let value = e.key
     let status
     if (value === '0') {
@@ -50,33 +52,61 @@ class ServiceList extends Component {
       status = 4
     }
     let url = 'http://volunteer.andyhui.xin/vps/list/' + status
-    axios.get(url)
-      .then(res => {
-        console.log(res)
-        if (res.data.code === 2000) {
-          const Servers = (res.data.vpList.data || []).map((item, index) => {
-            let State = stateName[item.status]
-            return {
-              key: index,
-              id: item.id,
-              name: item.title,
-              time: item.start_at,
-              state: State,
-              people_num: item.people_num,
-              has_people_num: item.has_people_num,
-              writer: item.user_name
+    let Ans = [], i=0, pageTotal = this.state.pageTotal, URL
+    let k
+    for (k = 0; k < pageTotal; k++) {
+      let Servers = []
+      let page = k + 1
+      URL = url + '?page=' + page
+      await axios.get(URL)
+        .then(res => {
+          console.log('menures:', res)
+          if (res.data.code === 2000) {
+            Servers = (res.data.vpList.data || []).map((item, index) => {
+              let State = stateName[item.status]
+              i = i + 1
+              return {
+                key: item.id,
+                id: item.id,
+                name: item.title,
+                time: item.start_at,
+                state: State,
+                people_num: item.people_num,
+                has_people_num: item.has_people_num,
+                writer: item.user_name
+              }
+
+            })
+            if (i) {
+              for (let i = 0; i < Servers.length; i++) {
+                if (typeof(Servers[i]) === 'undefined') {
+                }
+                else {
+                  Ans.push(Servers[i])
+                }
+              }
             }
-          })
-          console.log('servers:', Servers)
-          this.setState({Servers: Servers})
-        }
-        else {
-          message.error('请重新登录')
-          this.props.history.push('/')
-        }
+          }
+          else {
+            message.error('请重新登录')
+            this.props.history.push('/')
+          }
+        })
+    }
+    if (i) {
+      this.setState({Servers: Ans, pageinationLoad: true})
+    } else {
+      this.setState({
+        Servers: [{
+          key: 1,
+          id: 1,
+          name: '无记录',
+          time: '无记录',
+          state: '无记录',
+        }],
+        pageinationLoad: true
       })
-    // message.info('暂时无法搜索.')
-    // console.log('click', e.key)
+    }
   }
 
   handleSearch (e) {
@@ -85,27 +115,39 @@ class ServiceList extends Component {
   }
 
   handleSearchDate (e) {
+    if(e){
+      this.setState({
+        Servers: e,
+        pageinationLoad:true,
+        load:false
+      })
+    }
+  }
+
+  handleWait(){
     this.setState({
-      Servers: e,
-      pageinationLoad:true
+      load:true
     })
   }
 
-  getServer (order, string, page) {
+  async getServer (order, string, page) {
     if (order === 'show') {
+      this.setState({load:true})
+
       let url = 'http://volunteer.andyhui.xin/vps/apply/1'
       if (page) {
         url = url + '?page=' + page
       } else {
         url = url + '?page=1'
       }
-      console.log(url)
+      // console.log(url)
       axios.defaults.headers.common['token'] = localStorage.getItem('token') || ''
       axios.get(url)
         .then(res => {
           if (res.data.code === 2000) {
-            console.log(res)
+            // console.log(res)
             let pageTotal = res.data.vpList.last_page
+            let total=res.data.vpList.total
             const Servers = (res.data.vpList.data || []).map((item, index) => {
               let State
               if (item.apply_status === 0) {
@@ -130,7 +172,7 @@ class ServiceList extends Component {
                 writer: item.user_name
               }
             })
-            this.setState({Servers: Servers, pageTotal: pageTotal})
+            this.setState({Servers: Servers, pageTotal: pageTotal,total:total,load:false})
           }
           else {
             message.error('请重新登录')
@@ -141,6 +183,7 @@ class ServiceList extends Component {
     else if (order === 'status') {
 
     } else if (order === 'keyWords') {
+      this.setState({load:true})
 
       let Ans = [], i = 0, keyWords = string, pageTotal = this.state.pageTotal, URL, Index = 1
       let k
@@ -149,8 +192,8 @@ class ServiceList extends Component {
         let page = k + 1
         URL = 'http://volunteer.andyhui.xin/vps/apply/1' + '?page=' + page
         axios.defaults.headers.common['token'] = localStorage.getItem('token') || ''
-        console.log(URL)
-        axios.get(URL)
+        // console.log(URL)
+        await axios.get(URL)
           .then(res => {
             if (res.data.code === 2000) {
               // console.log(res.data.vpList.data)
@@ -203,37 +246,32 @@ class ServiceList extends Component {
 
             }
           })
-          .then(() => {
-            // console.log("await")
-            if (i) {
-              this.setState({Servers: Ans, pageinationLoad: true})
-            } else {
-              console.log('not find')
-              this.setState({
-                Servers: [{
-                  key: 1,
-                  id: 1,
-                  name: '没有找到',
-                  time: '没有找到',
-                  state: '没有找到',
-                }],
-                pageinationLoad: true
-              })
-            }
+        if (i) {
+          this.setState({Servers: Ans, pageinationLoad: true,load:false})
+        } else {
+          this.setState({
+            Servers: [{
+              key: 1,
+              id: 1,
+              name: '无记录',
+              time: '无记录',
+              state: '无记录',
+            }],
+            pageinationLoad: true,
+            load:false
           })
-
+        }
       }
-
     }
   }
 
   handleChoosePage (e) {
-    console.log(e)
+    // console.log(e)
     // this.setState({
     //   currentPage:e
     // })
     let page = e
-    console.log(page)
+    // console.log(page)
     this.getServer('show', ' ', page)
 
   }
@@ -312,28 +350,32 @@ class ServiceList extends Component {
 
         <Choose />
         <SearchDate handleSearchDate={this.handleSearchDate.bind(this)}
+                    handleWait={this.handleWait.bind(this)}
                     Url="http://volunteer.andyhui.xin/vps/apply/1"  pageTotal={this.state.pageTotal}/>
 
 
-        <Dropdown overlay={menu}>
-          <Button style={styleButton}>
-            活动状态 <Icon type="down" />
-          </Button>
+        <div style={{marginTop:-50}}>
+          <Dropdown overlay={menu}>
+            <Button style={styleButton}>
+              活动状态 <Icon type="down" />
+            </Button>
 
-        </Dropdown>
+          </Dropdown>
 
-        <Search
-          placeholder="input search text"
-          style={{width: 200, top: -1}}
-          onSearch={this.handleSearch}
-          enterButton
-        />
+          <Search
+            placeholder="input search text"
+            style={{width: 200, top: -1}}
+            onSearch={this.handleSearch}
+            enterButton
+          />
+        </div>
 
-        <div className="show">
-          {visible? <Table columns={columns} dataSource={this.state.Servers} pagination={{pageSize:5}} /> : <Table columns={columns} dataSource={this.state.Servers} pagination={visible} /> }
+
+        <div className="show" style={{marginTop:100,height:424}}>
+          {visible? <Table columns={columns} dataSource={this.state.Servers} pagination={{pageSize:5}} loading={this.state.load}/> : <Table columns={columns} dataSource={this.state.Servers} pagination={visible} loading={this.state.load}/> }
           {/*<Table columns={columns} dataSource={this.state.Servers} pagination={visible} />*/}
-          <Pagination defaultCurrent={1} total={50} pageSize={5} onChange={(e) => {this.handleChoosePage(e)}}
-                      style={{display: display}} />
+          <Pagination defaultCurrent={1} total={this.state.total} pageSize={5} onChange={(e) => {this.handleChoosePage(e)}}
+                      style={{display: display,marginTop:15,marginBottom:15,float:"right",lineHeight:1.5}} />
         </div>
       </div>
 
