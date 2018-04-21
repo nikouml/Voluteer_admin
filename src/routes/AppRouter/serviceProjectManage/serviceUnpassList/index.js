@@ -36,6 +36,7 @@ class ServiceUnpassList extends Component {
       loading: false,
       pageTotal: 1,
       pageinationLoad: false,
+      load:false
     }
 
     this.getServer = this.getServer.bind(this)
@@ -170,6 +171,7 @@ class ServiceUnpassList extends Component {
 
   async getServer(order, string, page) {
     if (order === 'show') {
+      this.setState({load:true})
       let pageTotal = 0,total=1
       let url = 'http://volunteer.andyhui.xin/vps/apply/0'
       if (page) {
@@ -209,12 +211,14 @@ class ServiceUnpassList extends Component {
               state: state,
             }
           })
-          this.setState({Servers: Servers, pageTotal: pageTotal,total:total})
+          this.setState({Servers: Servers, pageTotal: pageTotal,total:total,load:false})
         })
     }
     else if (order === "status") {
 
     } else if (order === "keyWords") {
+      this.setState({load:true})
+
       let keyWords = string,str = new RegExp(keyWords),Ans = [],i = 0
 
       for (let k = 0; k < this.state.pageTotal; k++) {
@@ -245,7 +249,7 @@ class ServiceUnpassList extends Component {
             }
           })
         if (i) {
-          this.setState({Servers: Ans, pageinationLoad: true})
+          this.setState({Servers: Ans, pageinationLoad: true,load:false})
         } else {
           this.setState({
             Servers: [{
@@ -255,17 +259,24 @@ class ServiceUnpassList extends Component {
               time: '无记录',
               state: '无记录',
             }],
-            pageinationLoad: true
+            pageinationLoad: true,
+            load:false
           })
         }
       }
     }
+
   }
 
   handleSearchDate(e) {
     this.setState({
       Servers: e,
       pageinationLoad:true
+    })
+  }
+  handleWait(){
+    this.setState({
+      load:true
     })
   }
 
@@ -343,22 +354,26 @@ class ServiceUnpassList extends Component {
         <Choose/>
         <div>
           <SearchDate handleSearchDate={this.handleSearchDate.bind(this)}
+                      handleWait={this.handleWait.bind(this)}
                       Url="http://volunteer.andyhui.xin/vps/apply/0" pageTotal={this.state.pageTotal}/>
-          <Dropdown overlay={menu1}>
-            <Button style={styleButton}>
-              活动状态 <Icon type="down"/>
-            </Button>
+          <div style={{marginTop:-50}}>
+            <Dropdown overlay={menu1}>
+              <Button style={styleButton}>
+                活动状态 <Icon type="down"/>
+              </Button>
 
-          </Dropdown>
+            </Dropdown>
 
-          <Search
-            placeholder="input search text"
-            onBlur={(e) => {
-              this.handleSearch(e)
-            }}
-            style={{width: 200, top: -1}}
-            enterButton
-          />
+            <Search
+              placeholder="input search text"
+              onBlur={(e) => {
+                this.handleSearch(e)
+              }}
+              style={{width: 200, top: -1}}
+              enterButton
+            />
+          </div>
+
 
 
           <br/><br/><br/><br/><br/>
@@ -392,11 +407,14 @@ class ServiceUnpassList extends Component {
             {hasSelected ? `选择了 ${selectedRowKeys.length} 个` : ''}
           </span>
         </div>
-        {visible? <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={{pageSize:5}} /> : <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible} /> }
-        {/*<Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible}/>*/}
-        <Pagination defaultCurrent={1} total={this.state.total} pageSize={5} onChange={(e) => {
-          this.handleChoosePage(e)
-        }} style={{display: display}}/>
+        <div style={{height:424}}>
+          {visible? <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={{pageSize:5}} loading={this.state.load}/> : <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible} loading={this.state.load} /> }
+          {/*<Table rowSelection={rowSelection} columns={columns} dataSource={this.state.Servers} pagination={visible}/>*/}
+          <Pagination defaultCurrent={1} total={this.state.total} pageSize={5} onChange={(e) => {
+            this.handleChoosePage(e)
+          }} style={{display: display,float:"right",lineHeight:1.5,marginTop:15,marginBottom:15}}/>
+        </div>
+
 
       </div>
     )

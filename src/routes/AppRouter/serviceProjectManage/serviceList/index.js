@@ -28,7 +28,8 @@ class ServiceList extends Component {
       },
       pageinationLoad: false,
       pageTotal: 1,
-      total:1
+      total:1,
+      load:false
     }
     this.getServer = this.getServer.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
@@ -114,14 +115,25 @@ class ServiceList extends Component {
   }
 
   handleSearchDate (e) {
+    if(e){
+      this.setState({
+        Servers: e,
+        pageinationLoad:true,
+        load:false
+      })
+    }
+  }
+
+  handleWait(){
     this.setState({
-      Servers: e,
-      pageinationLoad:true
+      load:true
     })
   }
 
   async getServer (order, string, page) {
     if (order === 'show') {
+      this.setState({load:true})
+
       let url = 'http://volunteer.andyhui.xin/vps/apply/1'
       if (page) {
         url = url + '?page=' + page
@@ -160,7 +172,7 @@ class ServiceList extends Component {
                 writer: item.user_name
               }
             })
-            this.setState({Servers: Servers, pageTotal: pageTotal,total:total})
+            this.setState({Servers: Servers, pageTotal: pageTotal,total:total,load:false})
           }
           else {
             message.error('请重新登录')
@@ -171,6 +183,7 @@ class ServiceList extends Component {
     else if (order === 'status') {
 
     } else if (order === 'keyWords') {
+      this.setState({load:true})
 
       let Ans = [], i = 0, keyWords = string, pageTotal = this.state.pageTotal, URL, Index = 1
       let k
@@ -234,7 +247,7 @@ class ServiceList extends Component {
             }
           })
         if (i) {
-          this.setState({Servers: Ans, pageinationLoad: true})
+          this.setState({Servers: Ans, pageinationLoad: true,load:false})
         } else {
           this.setState({
             Servers: [{
@@ -244,7 +257,8 @@ class ServiceList extends Component {
               time: '无记录',
               state: '无记录',
             }],
-            pageinationLoad: true
+            pageinationLoad: true,
+            load:false
           })
         }
       }
@@ -336,28 +350,32 @@ class ServiceList extends Component {
 
         <Choose />
         <SearchDate handleSearchDate={this.handleSearchDate.bind(this)}
+                    handleWait={this.handleWait.bind(this)}
                     Url="http://volunteer.andyhui.xin/vps/apply/1"  pageTotal={this.state.pageTotal}/>
 
 
-        <Dropdown overlay={menu}>
-          <Button style={styleButton}>
-            活动状态 <Icon type="down" />
-          </Button>
+        <div style={{marginTop:-50}}>
+          <Dropdown overlay={menu}>
+            <Button style={styleButton}>
+              活动状态 <Icon type="down" />
+            </Button>
 
-        </Dropdown>
+          </Dropdown>
 
-        <Search
-          placeholder="input search text"
-          style={{width: 200, top: -1}}
-          onSearch={this.handleSearch}
-          enterButton
-        />
+          <Search
+            placeholder="input search text"
+            style={{width: 200, top: -1}}
+            onSearch={this.handleSearch}
+            enterButton
+          />
+        </div>
 
-        <div className="show">
-          {visible? <Table columns={columns} dataSource={this.state.Servers} pagination={{pageSize:5}} /> : <Table columns={columns} dataSource={this.state.Servers} pagination={visible} /> }
+
+        <div className="show" style={{marginTop:100,height:424}}>
+          {visible? <Table columns={columns} dataSource={this.state.Servers} pagination={{pageSize:5}} loading={this.state.load}/> : <Table columns={columns} dataSource={this.state.Servers} pagination={visible} loading={this.state.load}/> }
           {/*<Table columns={columns} dataSource={this.state.Servers} pagination={visible} />*/}
           <Pagination defaultCurrent={1} total={this.state.total} pageSize={5} onChange={(e) => {this.handleChoosePage(e)}}
-                      style={{display: display}} />
+                      style={{display: display,marginTop:15,marginBottom:15,float:"right",lineHeight:1.5}} />
         </div>
       </div>
 

@@ -16,4 +16,33 @@
 }
 .announcement{
     margin: 10px;
+    font-size: 6px;
+}
+.help-second-title{
+    margin: 20px 10px;
+    font-size: 27px;
+}
+.helpcontent{
+    margin-left: 30px;
+    font-size: 20px;
+}
+.help-componet{
+    margin: 10px;
+
+}
+hr.hr0{
+    margin: 20px;
+    height:1px;
+    border:none;
+    border-top:1px dashed #1E90FF;
+    width: 80%;
+    align-items: left;
+}
+hr.hr1{
+    margin: 20px;
+    height:1px;
+    border:none;
+    border-top:1px dashed #1E90FF;
+    width: 80%;
+    align-items: left;
 }
