@@ -39,6 +39,9 @@ class Activity extends Component {
         user_name: '',
         apply_res:'',
         apply_status:'',
+        main_picture:'',
+        second_picture:'',
+        third_picture:'',
       },
     }
     this.getServer = this.getServer.bind(this)
@@ -71,13 +74,15 @@ class Activity extends Component {
           position_cdn:res.data.vpInfo.position_cdn,
           apply_status: res.data.vpInfo.apply_status,
           apply_res: res.data.vpInfo.apply_res,
+          main_picture:res.data.vpInfo.main_picture,
+          second_picture:res.data.vpInfo.second_picture,
+          third_picture:res.data.vpInfo.third_picture,
 
         }
         this.setState({dataSource: dataSource})
       })
   }
   render(){
-    const content='在实际工作中我们会遇到需要为“不定宽度的块状元素”设置居中，比如网页上的分页导航，因为分页的数量是不确定的，所以我们不能通过设置宽度来限制它的弹性。(不定宽块状元素：块状元素的宽度width不固定。)有三种方法可以对不定宽块状元素进行居中'
 
     const columns = [
       {
@@ -108,20 +113,7 @@ class Activity extends Component {
         dataIndex:'signInState'
       },
     ];
-    const data = [];
-    for (let i = 0; i < 46; i++) {
-      data.push({
-        key: i,
-        num:`${i+1}`,
-        name: `张 ${i+1}`,
-        time: '2015年2月1日',
-        notice: '已送达',
-        signIn:'2015年2月1日9点03分21秒',
-        signOut:'2015年2月1日19点03分12秒',
-        signInState:'已签到'
 
-      });
-    }
     return (
       <div>
         <div>
@@ -139,19 +131,14 @@ class Activity extends Component {
         <div>
           <Icon type="caret-right"/><span className="firstTitle">影像库（视频或照片）</span>
           <br/>
-         <img  src={require('../../../../../images/3.png')} width={200} height={200}/>
+         <img  src={this.state.dataSource.main_picture} width={200} height={200}  />
           <br/>
-          <img src={require('../../../../../images/4.png')} width={200} height={200}/>
+          <img src={this.state.dataSource.second_picture} width={200} height={200}/>
+          <br/>
+          <img src={this.state.dataSource.third_picture} width={200} height={200} />
           <br/> <br/> <br/>
         </div>
 
-        <div>
-          <Icon type="caret-right"/> <span className="firstTitle" >  参与项目详情</span> <br/> <br/>
-          <div>
-              <Table  columns={columns} dataSource={data} />
-          </div>
-          <br/> <br/> <br/>
-        </div>
 
         <div>
             <UserEvaluation path={this.props.match.params.id}/>
