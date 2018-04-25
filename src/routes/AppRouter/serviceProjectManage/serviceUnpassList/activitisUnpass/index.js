@@ -22,6 +22,9 @@ class ActivityUnpass extends Component {
         user_name: '',
         apply_res:'',
         apply_status:'',
+        main_picture:'',
+        second_picture:'',
+        third_picture:''
       },
     }
     this.getServer = this.getServer.bind(this)
@@ -51,7 +54,10 @@ class ActivityUnpass extends Component {
           type:res.data.vpInfo.type,
           main_picture:res.data.vpInfo.main_picture,
           apply_status: res.data.vpInfo.apply_status,
-          apply_res: res.data.vpInfo.apply_res
+          apply_res: res.data.vpInfo.apply_res,
+          main_picture:res.data.vpInfo.main_picture,
+          second_picture:res.data.vpInfo.second_picture,
+          third_picture:res.data.vpInfo.third_picture
         }
         this.setState({dataSource: dataSource})
       })
@@ -89,7 +95,7 @@ class ActivityUnpass extends Component {
         type:this.state.dataSource.type,
         main_picture:this.state.dataSource.main_picture,
         apply_res:apply_res,
-        apply_status:apply_status
+        apply_status:apply_status,
       }
     }
       axios(config)
@@ -134,11 +140,11 @@ class ActivityUnpass extends Component {
         <div>
         <Icon type="caret-right" /><span className="firstTitle">影像库（视频或照片）</span>
         <br />
-        <img src={require('../../../../../images/3.png')} width={200} height={200}
-        style={{float: 'left', marginLeft: 300}} />
-        <br />
-        <img src={require('../../../../../images/4.png')} width={200} height={200}
-        style={{float: 'left', marginLeft: 100}} />
+          <img  src={this.state.dataSource.main_picture} width={200} height={200}  />
+          <br/>
+          <img src={this.state.dataSource.second_picture} width={200} height={200}/>
+          <br/>
+          <img src={this.state.dataSource.third_picture} width={200} height={200} />
 
         <br /> <br /> <br />
         </div>
