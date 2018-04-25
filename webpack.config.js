@@ -11,10 +11,9 @@ module.exports = function (webpackConfig, env) {
         }
       }),
       new QiniuPlugin({
-        ACCESS_KEY: process.env.ACCESS_KEY,
-        SECRET_KEY: process.env.SECRET_KEY,
-        bucket: 'test',
-        path: 'fe/'
+        ACCESS_KEY: 'd7ZKJbvhgPIYLqOaiKFtyTgV-A2W8fuMpEp13rs1',
+        SECRET_KEY: 'SHbtGrVzupLB9vsY2KnGHkZRd53u8YK10vdTLaq8',
+        bucket: 'laowang'
       })
     )
   }

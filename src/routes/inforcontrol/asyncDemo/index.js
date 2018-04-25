@@ -52,7 +52,7 @@ const columns = [{
   dataIndex:'register',
 },
   {
-    title: 'Action',
+    title: '操作',
     key: 'operation',
     fixed: 'right',
     width: 100,
@@ -63,7 +63,8 @@ const columns = [{
         {/*<a href="#">Stop</a>*/}
         {/*<Dropdown overlay={menu}>*/}
         {/*<a href="#">*/}
-        More <Icon type="down" />
+        详情
+        {/*<Icon type="down" />*/}
         {/*</a>*/}
         {/*</Dropdown>*/}
         {/*</span>*/}
@@ -76,7 +77,7 @@ for (let i = 0; i < 46; i++) {
   data.push({
     key: i,
     num: `${i}`,
-    name: `Edward King ${i}`,
+    name: `zhangsan ${i}`,
     age: 32,
     address: `London, Park Lane no. ${i}`,
     idcard: '111111111111111111',

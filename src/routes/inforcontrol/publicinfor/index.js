@@ -18,16 +18,12 @@ const EditableCell = ({editable, value, onChange}) => (
 const {TextArea} = Input
 const TabPane = Tabs.TabPane
 export default class incontrol extends React.Component {
-
   static propTypes = {
     id: PropTypes.string,
     className: PropTypes.string,
   }
   static defaultProps = {
     className: 'content-table'
-  }
-  state = {
-    show: 0,
   }
   onChange = (key) => {
     this.setState({show: parseInt(key)})
@@ -62,6 +58,7 @@ export default class incontrol extends React.Component {
               <div
                 className={`${this.props.className}-img`}
                 id={`${this.props.id}-imgBlock${i}`}
+                style={{fontSize: 100}}
               >
                 {img}
                 {another}
@@ -108,9 +105,9 @@ export default class incontrol extends React.Component {
             <div className="editable-row-operations">
               {
                 editable ? <span>
-                  <a onClick={() => this.save(record.key)}>Save</a>
-                  <Popconfirm title="Sure to cancel?" onConfirm={() => this.cancel(record.key)}>
-                    <a>Cancel</a>
+                  <a onClick={() => this.save(record.key)}>保存</a>
+                  <Popconfirm title="确定取消吗?" onConfirm={() => this.cancel(record.key)}>
+                    <a>取消</a>
                   </Popconfirm>
                 </span>
                   : <a onClick={() => this.edit(record.key)}>编辑</a>
@@ -130,7 +127,10 @@ export default class incontrol extends React.Component {
           sys_title: '公告标题'
         }
       ],
-      nowinfo: 'null'
+      show: 0,
+      lastnotice: {
+        sys_content: ' '
+      }
 
     }
     this.cacheData = this.state.data.map(item => ({...item}))
@@ -147,7 +147,7 @@ export default class incontrol extends React.Component {
     this.setState({nameinput: e.target.value})
   }
   onChange2(e) {
-    this.setState({sys_title:e.target.value})
+    this.setState({sys_title: e.target.value})
   }
   renderColumns (text, record, column) {
     return (
@@ -156,7 +156,22 @@ export default class incontrol extends React.Component {
         value={text}
         onChange={value => this.handleChange(value, record.key, column)}
       />
+
     )
+  }
+  changeData(){
+    const IDA = record.sys_id
+    const config={
+      method:'post',
+      url:'http://volunteer.andyhui.xin/notice/'+ IDA,
+      headers:{"Content-Type":"application/json","token":localStorage.getItem('token') || ''},
+      data:{
+        sys_title:this.state.data.sys_title,
+        sys_content:this.state.data.sys_content,
+        sys_level:this.state.data.sys_level
+      }
+    }
+    axios(config)
   }
 
   handleChange (value, key, column) {
@@ -171,6 +186,7 @@ export default class incontrol extends React.Component {
   edit (key) {
     const newData = [...this.state.data]
     const target = newData.filter(item => key === item.key)[0]
+    console.log(target)
     if (target) {
       target.editable = true
       this.setState({data: newData})
@@ -201,17 +217,19 @@ export default class incontrol extends React.Component {
     this.getnowinfo()
     this.getinfo()
   }
-  getnowinfo(){
+  getnowinfo() {
+    console.log(this.props)
     axios.get('http://volunteer.andyhui.xin/lastnotice')
       .then(res =>{
-        if (res.data.code === 3000){
-          const nowinfo = {
-            sys_content: res.data.lastnotice,
+        if (res.data.code === 3001) {
+          const lastnotice = {
+            sys_content: res.data.lastnotice.sys_content
           }
-          this.setState({nowinfo: nowinfo})
+          this.setState({lastnotice: lastnotice})
         }
         else {
-          console.log(res.data.message)
+          console.log(res.data)
+          console.log('1233',this.state.lastnotice)
         }
       })
   }
@@ -272,17 +290,18 @@ export default class incontrol extends React.Component {
     const childrenData = [{
       tag: {tag: '公告信息'},
       // img: <img width="10%" src="https://zos.alipayobjects.com/rmsportal/xBrUaDROgtFBRRL.png" />,
-      text: `<div class="announcement">
+      text: `<div class="announcement" style="font-size: large">
         历史公告信息
       </div>`,
       another:
-         <Input addonBefore="当前公告" defaultValue={this.state.nowinfo}  size='large'/>,
+         <Input addonBefore="当前公告" defaultValue={this.state.lastnotice.sys_content}  size='large'/>,
       edit: <Table bordered dataSource={this.state.data} columns={this.columns} />,
 
       // button:<EditableTable />,
     },
       {
-        tag: {tag: '公告创建'},
+        tag: {tag:
+            '公告创建'},
         // img: <img width="100%" src="https://zos.alipayobjects.com/rmsportal/xBrUaDROgtFBRRL.png" />,
         text: `
             <div class="ii">     
