@@ -49,10 +49,7 @@ class LayoutContent extends React.Component {
             roles: res.data.roles,
             token: res.data.token
           })
-        } else if (res.data.code === 1013) {
-          console.log(res)
-          message.error('非管理员用户')
-        }
+        } else {}
       })
   }
 

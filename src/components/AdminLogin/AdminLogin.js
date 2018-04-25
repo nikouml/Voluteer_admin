@@ -25,19 +25,25 @@ class Login extends React.Component {
           mobile: values.mobile,
           password: values.password
         }).then(res => {
-          localStorage.setItem('datetime',new Date().toLocaleTimeString())
+          localStorage.setItem('datetime', new Date().toLocaleTimeString())
           localStorage.setItem('token', res.data.token)
-          localStorage.setItem('user_id',res.data.user_id)
+          localStorage.setItem('user_id', res.data.user_id)
           this.setState({loading: false})
           if (res.data.code === 1000) {
-            message.success('登录成功')
-            this.props.history.push('/home')
+            axios.defaults.headers.common['token'] = localStorage.getItem('token') || ''
+            axios.get(`http://volunteer.andyhui.xin/adminInfo/`)
+              .then(res => {
+                if (res.data.code === 1013) {
+                  message.error('非管理员用户')
+                } else {
+                  message.success('登录成功')
+                  this.props.history.push('/home')
+                }
+              })
           } else if (res.data.code === 1005) {
             message.error('密码错误')
           } else if (res.data.code === 1003) {
             message.error('用户不存在')
-          } else if (res.data.code === 1013) {
-            message.error('非管理员用户')
           } else {
             message.error('表单验证失败')
           }
@@ -59,7 +65,8 @@ class Login extends React.Component {
     return (
       <div className='content'>
         <div className='main-content'>
-          <img src="http://p53vmqr8d.bkt.clouddn.com/login_logo.png" alt="" width='150' height='150' style={{marginLeft: 120}} />
+          <img src="http://p53vmqr8d.bkt.clouddn.com/login_logo.png" alt="" width='150' height='150'
+               style={{marginLeft: 120}} />
           <Form onSubmit={this.handleSubmit} className="login-form">
             <FormItem>
               {getFieldDecorator('mobile', {
